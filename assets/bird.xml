@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--  AssimpBullet Data -->
+<!-- ====================================================================== -->
+<AssimpBullet>
+  <Bones
+    minLength     = "2.0"
+    capsuleRadius = "0.1"
+    mass          = "0.01">
+    <Bone
+      nodeA = "body"
+      nodeB = "tail"
+      mass  = "3.0">
+    </Bone>
+    <Bone
+      nodeA = "tail"
+      nodeB = "">
+    </Bone>
+    <Bone
+      nodeA = "head"
+      nodeB = "T_beak"
+      mass  = "1.0">
+    </Bone>
+    <Bone
+      nodeA = "T_beak"
+      nodeB = "">
+    </Bone>
+    <Bone
+      nodeA = "B_beak"
+      nodeB = "">
+    </Bone>
+    <Bone
+      nodeA = "L_wing"
+      nodeB = "">
+    </Bone>
+    <Bone
+      nodeA = "R_wing"
+      nodeB = "">
+    </Bone>
+    <Bone
+      nodeA = "L_thigh"
+      nodeB = "L_shin">
+    </Bone>
+    <Bone
+      nodeA = "L_shin"
+      nodeB = "L_foot">
+    </Bone>
+    <Bone
+      nodeA = "L_foot"
+      nodeB = ""
+      mass  = "1.0">
+    </Bone>
+    <Bone
+      nodeA = "R_thigh"
+      nodeB = "R_shin">
+    </Bone>
+    <Bone
+      nodeA = "R_shin"
+      nodeB = "R_foot">
+    </Bone>
+    <Bone
+      nodeA = "R_foot"
+      nodeB = ""
+      mass  = "1.0">
+    </Bone>
+  </Bones>
+
+  <Joints
+      swing1 = "20.0"
+      swing2 = "20.0"
+      twist  = "0.0">
+    <Joint
+      nodeA = "body"
+      nodeB = "head">
+    </Joint>
+    <Joint
+      nodeA = "body"
+      nodeB = "L_wing">
+    </Joint>
+    <Joint
+      nodeA = "body"
+      nodeB = "R_wing">
+    </Joint>
+    <Joint
+      nodeA = "body"
+      nodeB = "L_thigh">
+    </Joint>
+    <Joint
+      nodeA = "body"
+      nodeB = "R_thigh">
+    </Joint>
+    <Joint
+      nodeA = "head"
+      nodeB = "T_beak"
+      swing2 = "0.0">
+    </Joint>
+    <Joint
+      nodeA = "head"
+      nodeB = "B_beak"
+      swing2 = "0.0">
+    </Joint>
+    <Joint
+      nodeA = "body"
+      nodeB = "tail">
+    </Joint>
+    <Joint
+      nodeA = "L_thigh"
+      nodeB = "L_shin"
+      swing1 = "45.0"
+      swing2 = "45.0">
+    </Joint>
+    <Joint
+      nodeA = "L_shin"
+      nodeB = "L_foot">
+    </Joint>
+    <Joint
+      nodeA = "R_thigh"
+      nodeB = "R_shin"
+      swing1 = "45.0"
+      swing2 = "45.0">
+    </Joint>
+    <Joint
+      nodeA  = "R_shin"
+      nodeB  = "R_foot">
+    </Joint>
+  </Joints>
+
+  <DisableCollisions>
+    <DisableCollision>
+      <Joint
+        nodeA = "body"
+        nodeB = "head">
+      </Joint>
+      <Joint
+        nodeA = "body"
+        nodeB = "L_wing">
+      </Joint>
+      <Joint
+        nodeA = "body"
+        nodeB = "R_wing">
+      </Joint>
+      <Joint
+        nodeA = "body"
+        nodeB = "L_thigh">
+      </Joint>
+      <Joint
+        nodeA = "body"
+        nodeB = "R_thigh">
+      </Joint>
+    </DisableCollision>
+    <DisableCollision>
+      <Joint
+        nodeA = "head"
+        nodeB = "T_beak">
+      </Joint>
+      <Joint
+        nodeA = "head"
+        nodeB = "B_beak">
+      </Joint>
+    </DisableCollision>
+  </DisableCollisions>
+
+  <Hang
+    stickSize  = "0.2"
+    nodeFront  = "head_node"
+    nodeBack   = "tail_node"
+    nodeLeft   = "l_foot_node"
+    nodeRigth  = "r_foot_node"
+    nodeCross  = "cross_node">
+    <string
+      node        = "head_node"
+      bonePos     = "T_beak"
+      boneHolder  = "head">
+    </string>
+    <string
+      node        = "tail_node"
+      bonePos     = "tail"
+      boneHolder  = "body">
+    </string>
+    <string
+      node        = "l_foot_node"
+      bonePos     = "L_foot"
+      boneHolder  = "L_foot">
+    </string>
+    <string
+      node        = "r_foot_node"
+      bonePos     = "R_foot"
+      boneHolder  = "R_foot">
+    </string>
+    <string
+      node        = "body_node"
+      bonePos     = "body"
+      boneHolder  = "body">
+    </string>
+  </Hang>
+
+  <Anims>
+    <Anim
+      name = "sing">
+      <Bone
+        name    = "T_beak"
+        rotateX = "0"
+        rotateY = "1.6"
+        rotateZ = "0">
+      </Bone>
+      <Bone
+        name    = "B_beak"
+        rotateX = "0"
+        rotateY = "-1.6"
+        rotateZ = "0">
+      </Bone>
+	  <sound>bird_twitter_01</sound>
+	  <sound>bird_twitter_02</sound>
+	  <sound>bird_twitter_03</sound>
+	  <sound>bird_twitter_04</sound>
+	  <sound>bird_twitter_05</sound>
+	  <sound>bird_twitter_06</sound>
+	  <sound>bird_twitter_07</sound>
+	  <sound>bird_twitter_08</sound>
+	  <sound>bird_twitter_09</sound>
+    </Anim>
+    <Anim
+      name = "fly">
+      <Bone
+        name    = "L_wing"
+        rotateX = "0"
+        rotateY = "0.3"
+        rotateZ = "0">
+      </Bone>
+      <Bone
+        name    = "R_wing"
+        rotateX = "0"
+        rotateY = "0.3"
+        rotateZ = "0">
+      </Bone>
+	  <sound>bird_flap_01</sound>
+    </Anim>
+    <Anim
+      name = "wag">
+      <Bone
+        name    = "tail"
+        rotateX = "0"
+        rotateY = "0.2"
+        rotateZ = "0">
+      </Bone>
+	  <sound>bird_tail_wag_01</sound>
+    </Anim>
+  </Anims>
+</AssimpBullet>

@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="blocks">
+      <UniqueIdentifier>{379d2024-4860-4b0a-88b3-d50bc1de9aa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blocks\mndlkit">
+      <UniqueIdentifier>{6f37deef-119c-4ce7-a3f4-8fa014333906}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blocks\Cinder-Leap">
+      <UniqueIdentifier>{de21ba7d-dc3e-41e5-8d84-61e410a84d00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="blocks\Cinder-Assimp">
+      <UniqueIdentifier>{0ffa025c-f910-4dfb-aeda-8806a82c5017}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blocks\Cinder-OpenAL">
+      <UniqueIdentifier>{7c057e4e-544a-48dd-91f1-ab1c36d68f81}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\BulletWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\..\cinder_0.8.5\blocks\Cinder-Assimp\src\AssimpLoader.h">
+      <Filter>blocks\Cinder-Assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder_0.8.5\blocks\Cinder-Assimp\src\Node.h">
+      <Filter>blocks\Cinder-Assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder_0.8.5\blocks\MndlKit\src\mndlkit\params\PParams.h">
+      <Filter>blocks\mndlkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\BulletParameter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder_0.8.5\blocks\Cinder-OpenAL\src\OpenALAudio.h">
+      <Filter>blocks\Cinder-OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder_0.8.5\blocks\Cinder-Leap\include\Cinder-Leap.h">
+      <Filter>blocks\Cinder-Leap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder_0.8.5\blocks\Cinder-Leap\include\Leap.h">
+      <Filter>blocks\Cinder-Leap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder_0.8.5\blocks\Cinder-Leap\include\LeapMath.h">
+      <Filter>blocks\Cinder-Leap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cinder_0.8.5\blocks\Cinder-Assimp\src\AssimpMesh.h">
+      <Filter>blocks\Cinder-Assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\BulletPicker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\BulletDebugDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\BulletConverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ModelFileManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ModelManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\MarionetteZooApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\BulletWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\cinder_0.8.5\blocks\Cinder-Assimp\src\AssimpLoader.cpp">
+      <Filter>blocks\Cinder-Assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cinder_0.8.5\blocks\Cinder-Assimp\src\Node.cpp">
+      <Filter>blocks\Cinder-Assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cinder_0.8.5\blocks\MndlKit\src\mndlkit\params\PParams.cpp">
+      <Filter>blocks\mndlkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\BulletParameter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cinder_0.8.5\blocks\Cinder-OpenAL\src\OpenALAudio.cpp">
+      <Filter>blocks\Cinder-OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\BulletDebugDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\BulletPicker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ModelFileManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ModelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
