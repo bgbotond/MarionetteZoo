@@ -50,7 +50,7 @@
 	<SoftContactsHardness01>1</SoftContactsHardness01>
 	<AnchorsHardness01>1</AnchorsHardness01>
 	<MaximumVolumeRatioForPose>1</MaximumVolumeRatioForPose>
-	<TimeScale>0.100000001</TimeScale>
+	<TimeScale>1</TimeScale>
 	<VelocitiesSolverIterations>0</VelocitiesSolverIterations>
 	<PositionsSolverIterations>15</PositionsSolverIterations>
 	<DriftSolverIterations>0</DriftSolverIterations>
