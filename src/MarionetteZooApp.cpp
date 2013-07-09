@@ -261,7 +261,7 @@ void MarionetteZooApp::reload()
 		btTypedConstraint* constraint = worldImporter.getConstraintByIndex( constraintIdx );
 		//btTypedConstraintType type = constraint->getConstraintType();
 		mBulletWorld->setupConstraint( constraint );
-		mBulletWorld->addConstraint( constraint, true );
+		mBulletWorld->addConstraint( constraint, true, true );
 	}
 
 	for( int softBodyIdx = 0; softBodyIdx < worldImporter.getNumSoftBodies(); softBodyIdx++ )
