@@ -1,4 +1,4 @@
-#include "btSoftWorldImporter.h"
+#include "BulletExtension/btSoftWorldImporter.h"
 
 btSoftBulletWorldImporter::btSoftBulletWorldImporter( btSoftRigidDynamicsWorld* world )
 	: btBulletWorldImporter( world )
