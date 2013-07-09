@@ -248,7 +248,7 @@ void MarionetteZooApp::reload()
 	mBulletWorld->clear();
 
 	btSoftBulletWorldImporter worldImporter( (btSoftRigidDynamicsWorld*)mBulletWorld->getDynamicsWorld() );
-	worldImporter.loadFile( "d:/CreativeCode/projects/MarionetteZoo/assets/softbodytest.bullet" );
+	worldImporter.loadFile( ci::app::App::get()->getAssetPath( "softbody_small_rectangle.bullet" ).string().c_str() );
 
 	for( int rigidBodyIdx = 0; rigidBodyIdx < worldImporter.getNumRigidBodies(); rigidBodyIdx++ )
 	{

@@ -21,16 +21,10 @@ subject to the following restrictions:
 #include "BulletSoftBody/btSoftBody.h"
 #include "BulletSoftBody/btSoftBodyData.h"
 #include "BulletSoftBody/btSoftRigidDynamicsWorld.h"
-//#include "btWorldImporter.h"
-#if defined( CINDER_MAC )
 #include "Extras/Serialize/BulletFileLoader/bFile.h"
 #include "Extras/Serialize/BulletFileLoader/btBulletFile.h"
 #include "Extras/Serialize/BulletWorldImporter/btBulletWorldImporter.h"
-#elif defined( CINDER_MSW )
-#include "../Extras/Serialize/BulletFileLoader/bFile.h"
-#include "../Extras/Serialize/BulletFileLoader/btBulletFile.h"
-#include "../Extras/Serialize/BulletWorldImporter/btBulletWorldImporter.h"
-#endif
+
 ///The btSoftBulletWorldImporter is a starting point to import .bullet files containing SoftBody objects.
 class btSoftBulletWorldImporter : public btBulletWorldImporter
 {
