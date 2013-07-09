@@ -9,8 +9,8 @@
 #include "BulletWorld.h"
 #include "ModelFileManager.h"
 
-#include "../Extras/Serialize/BulletFileLoader/bFile.h"
-#include "../Extras/Serialize/BulletWorldImporter/btBulletWorldImporter.h"
+#include "Extras/Serialize/BulletFileLoader/bFile.h"
+#include "Extras/Serialize/BulletWorldImporter/btBulletWorldImporter.h"
 
 namespace btd
 {
@@ -34,7 +34,7 @@ namespace btd
 	{
 	}
 
-	void Model::update( const ci::Vec3f pos, const ci::Vec3f dir, const ci::Vec3f norm )
+	void Model::update( const ci::Vec3f& pos, const ci::Vec3f& dir, const ci::Vec3f& norm )
 	{
 		for( auto it = mBones.begin(); it != mBones.end(); ++it )
 		{

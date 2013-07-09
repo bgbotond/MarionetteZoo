@@ -7,7 +7,7 @@
 
 namespace btd
 {
-	BulletPicker::BulletPicker( btRigidBody* rigidBody, btVector3& pivot, float distance, ci::Vec3f& position )
+	BulletPicker::BulletPicker( btRigidBody* rigidBody, const btVector3& pivot, float distance, const ci::Vec3f& position )
 		: mConstraint( 0 )
 		, mDistance( distance )
 		, mPosition( position )

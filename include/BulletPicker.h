@@ -17,7 +17,7 @@ namespace btd
 	class BulletPicker
 	{
 	public:
-		BulletPicker( btRigidBody* rigidBody, btVector3& pivot, float distance, ci::Vec3f& position );
+		BulletPicker( btRigidBody* rigidBody, const btVector3& pivot, float distance, const ci::Vec3f& position );
 		~BulletPicker();
 
 		void update( const ci::Ray& ray );

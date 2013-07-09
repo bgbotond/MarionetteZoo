@@ -24,7 +24,7 @@ namespace btd
 		Model( const BulletWorldRef& bulletWorld, const ci::Vec3f& worldOffset, const std::string& type );
 		~Model();
 
-		void update( const ci::Vec3f pos, const ci::Vec3f dir, const ci::Vec3f norm );
+		void update( const ci::Vec3f& pos, const ci::Vec3f& dir, const ci::Vec3f& norm );
 		void draw();
 
 		BulletWorldRef& getBulletWorld();
