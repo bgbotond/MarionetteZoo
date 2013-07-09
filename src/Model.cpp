@@ -9,8 +9,13 @@
 #include "BulletWorld.h"
 #include "ModelFileManager.h"
 
+#if defined( CINDER_MAC )
 #include "Extras/Serialize/BulletFileLoader/bFile.h"
 #include "Extras/Serialize/BulletWorldImporter/btBulletWorldImporter.h"
+#elif defined( CINDER_MSW )
+#include "../Extras/Serialize/BulletFileLoader/bFile.h"
+#include "../Extras/Serialize/BulletWorldImporter/btBulletWorldImporter.h"
+#endif
 
 namespace btd
 {

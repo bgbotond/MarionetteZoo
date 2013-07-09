@@ -1,5 +1,4 @@
-#ifndef __Model_H__
-#define __Model_H__
+#pragma once
 
 #include <vector>
 #include "AssimpLoader.h"
@@ -83,5 +82,3 @@ namespace btd
 	// TODO make other class for String and CrossBar
 
 } // namespace btd
-
-#endif // __Model_H__

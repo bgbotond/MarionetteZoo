@@ -1,11 +1,11 @@
-#ifndef __ModelManager_H__
-#define __ModelManager_H__
+#pragma once
 
 #include <memory>
 #include <vector>
 
+#include "cinder/Vector.h"
+
 #include "Model.h"
-#include "Cinder/Vector.h"
 
 namespace btd
 {
@@ -37,5 +37,3 @@ namespace btd
 	};
 
 } // namespace btd
-
-#endif // __ModelManager_H__

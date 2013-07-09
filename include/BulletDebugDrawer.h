@@ -1,5 +1,4 @@
-#ifndef __BulletDebugDrawer_H__
-#define __BulletDebugDrawer_H__
+#pragma once
 
 #include "btBulletCollisionCommon.h"
 
@@ -35,5 +34,3 @@ namespace btd
 	};
 
 } // namespace btd
-
-#endif // __BulletDebugDrawer_H__

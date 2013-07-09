@@ -28,6 +28,12 @@
     <Filter Include="blocks\Cinder-OpenAL">
       <UniqueIdentifier>{7c057e4e-544a-48dd-91f1-ab1c36d68f81}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\BulletExtension">
+      <UniqueIdentifier>{233ba00c-b3f2-40ef-b0a7-185bc9eed61e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BulletExtension">
+      <UniqueIdentifier>{404df1d9-8a89-4c7a-a92b-e527aaca2326}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\BulletWorld.cpp">
@@ -81,13 +87,16 @@
     <ClCompile Include="..\src\MarionetteZooApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\BulletExtension\btSoftWorldImporter.cpp">
+      <Filter>Source Files\BulletExtension</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\Resources.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\BulletWorld.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\BulletExtension\btSoftWorldImporter.h">
+      <Filter>Header Files\BulletExtension</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,4 @@
-#ifndef __BulletConverter_H__
-#define __BulletConverter_H__
+#pragma once
 
 #include "cinder/Vector.h"
 #include "cinder/Quaternion.h"
@@ -29,5 +28,3 @@ namespace btd
 	}
 
 } // namespace btd
-
-#endif // __BulletConverter_H__

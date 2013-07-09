@@ -6,9 +6,9 @@
 namespace btd
 {
 	BulletParameter::BulletParameter()
-	: mGeneralDebugDrawTypes( 0 )
-	, mSoftDebugDrawTypes( 0 )
-	, mDrawTransform( false )
+		: mGeneralDebugDrawTypes( 0 )
+		, mSoftDebugDrawTypes( 0 )
+		, mDrawTransform( false )
 	{
 		setGeneralDebugDrawEnable( GDDT_DrawWireframe       , true  );
 		setGeneralDebugDrawEnable( GDDT_DrawAabb            , false );

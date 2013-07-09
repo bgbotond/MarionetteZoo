@@ -1,3 +1,4 @@
+#include "cinder/app/App.h"
 #include "ModelFileManager.h"
 
 namespace btd
@@ -32,7 +33,7 @@ namespace btd
 		modelFileInfo.mBulletFile = bulletFile;
 		modelFileInfo.mActionFile = actionFile;
 
-		mModelFileInfos.insert( std::make_pair( type, modelFileInfo ) );
+		mModelFileInfos[ type ] = modelFileInfo;
 	}
 
 	bool ModelFileManager::hasModel( const std::string& type )
@@ -60,25 +61,25 @@ namespace btd
 	ci::fs::path ModelFileManager::getModelFile( const std::string& type )
 	{
 		if( ! hasModel( type ) )
-			return "";
+			return ci::fs::path();
 
-		return getModelFileInfo( type )->second.mModelFile;
+		return ci::app::App::get()->getAssetPath( getModelFileInfo( type )->second.mModelFile );
 	}
 
 	ci::fs::path ModelFileManager::getBulletFile( const std::string& type )
 	{
 		if( ! hasModel( type ) )
-			return "";
+			return ci::fs::path();
 
-		return getModelFileInfo( type )->second.mBulletFile;
+		return ci::app::App::get()->getAssetPath( getModelFileInfo( type )->second.mBulletFile );
 	}
 
 	ci::fs::path ModelFileManager::getActionFile( const std::string& type )
 	{
 		if( ! hasModel( type ) )
-			return "";
+			return ci::fs::path();
 
-		return getModelFileInfo( type )->second.mActionFile;
+		return ci::app::App::get()->getAssetPath( getModelFileInfo( type )->second.mActionFile );
 	}
 
 	ModelFileManager::ModelFileInfos::iterator ModelFileManager::getModelFileInfo( const std::string& type )

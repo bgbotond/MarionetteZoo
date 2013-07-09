@@ -1,5 +1,4 @@
-#ifndef __BullePicker_H__
-#define __BullePicker_H__
+#pragma once
 
 // TODO find out the correct header for shared_ptr
 #include <vector>
@@ -31,5 +30,3 @@ namespace btd
 	};
 
 } // namespace btd
-
-#endif // __BullePicker_H__

@@ -1,5 +1,4 @@
-#ifndef __BulletWorld_H__
-#define __BulletWorld_H__
+#pragma once
 
 #include "cinder/app/App.h"
 #include "cinder/app/MouseEvent.h"
@@ -21,7 +20,9 @@ namespace btd
 	class BulletWorld
 	{
 	protected:
-		typedef std::vector< btRigidBody* > RigidBodies;
+		typedef std::vector< btRigidBody*       > RigidBodies;
+		typedef std::vector< btSoftBody*        > SoftBodies;
+		typedef std::vector< btTypedConstraint* > Constraints;
 
 	public:
 		BulletWorld();
@@ -43,16 +44,21 @@ namespace btd
 
 		void addRigidBody( btRigidBody* rigidBody, bool load = false );
 		void removeRigidBody( btRigidBody* rigidBody );
+		void destroyRigidBodyAll();
 		void addSoftBody( btSoftBody* softBody, bool load = false );
 		void removeSoftBody( btSoftBody* softBody );
+		void destroySoftBodyAll();
 		void addConstraint( btTypedConstraint* constraint, bool disableCollisionsBetweenLinkedBodies, bool load = false );
 		void removeConstraint( btTypedConstraint* constraint );
+		void destroyConstraintAll();
 
 		void setupRigidBody( btRigidBody* rigidBody );
 		void setupSoftBody( btSoftBody* softBody );
 		void setupConstraint( btTypedConstraint* constraint );
 
 		BulletParameterRef getBulletParameter() const;
+
+		void clear();
 
 	protected:
 		bool checkIntersects( const ci::Ray &ray, float farClip );
@@ -69,6 +75,8 @@ namespace btd
 		btSoftBodyWorldInfo                        mSoftBodyWorldInfo;
 
 		RigidBodies                                mRigidBodies;
+		SoftBodies                                 mSoftBodies;
+		Constraints                                mConstraints;
 
 		BulletDebugDrawerRef                       mBulletDebugDrawer;
 		BulletParameterRef                         mBulletParameter;
@@ -81,5 +89,3 @@ namespace btd
 	};
 
 } // namespace btd
-
-#endif // __BulletWorld_H__

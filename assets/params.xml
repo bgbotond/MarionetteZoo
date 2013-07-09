@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters>
+	<width>230</width>
+	<height>550</height>
+	<posx>8</posx>
+	<posy>29</posy>
+	<icon>0</icon>
+	<valueswidth>70</valueswidth>
+	<LockCameraL>0</LockCameraL>
+	<Fov>45</Fov>
+	<Eye_x>0</Eye_x>
+	<Eye_y>10</Eye_y>
+	<Eye_z>-40</Eye_z>
+	<CenterOfInterest_x>0</CenterOfInterest_x>
+	<CenterOfInterest_y>10</CenterOfInterest_y>
+	<CenterOfInterest_z>0</CenterOfInterest_z>
+</Parameters>
+<Physics>
+	<width>250</width>
+	<height>550</height>
+	<posx>254</posx>
+	<posy>20</posy>
+	<icon>0</icon>
+	<valueswidth>70</valueswidth>
+	<Gravity_x>0</Gravity_x>
+	<Gravity_y>-10</Gravity_y>
+	<Gravity_z>0</Gravity_z>
+	<SimulateOneV>0</SimulateOneV>
+	<SimulateAlwaysC>1</SimulateAlwaysC>
+	<LinearDamping>0.850000024</LinearDamping>
+	<AngularDamping>0.850000024</AngularDamping>
+	<DeactivationTime>0.800000012</DeactivationTime>
+	<LinearSleepingThresholds>1.60000002</LinearSleepingThresholds>
+	<AngularSleepingThresholds>2.5</AngularSleepingThresholds>
+	<Damping>0.600000024</Damping>
+	<StopCMF>0.300000012</StopCMF>
+	<StopERP>0.800000012</StopERP>
+	<Part>16</Part>
+	<Mass>5</Mass>
+	<VelocitiesCorrectionFactorBaumgarte>1</VelocitiesCorrectionFactorBaumgarte>
+	<DampingCoefficient01>0</DampingCoefficient01>
+	<DragCoefficient0Inf>0</DragCoefficient0Inf>
+	<LiftCoefficient0Inf>0</LiftCoefficient0Inf>
+	<PressureCoefficientInfInf>0</PressureCoefficientInfInf>
+	<VolumeConversationCoefficient0Inf>0</VolumeConversationCoefficient0Inf>
+	<DynamicFrictionCoefficient01>0.200000003</DynamicFrictionCoefficient01>
+	<PoseMatchingCoefficient01>0</PoseMatchingCoefficient01>
+	<RigidContactsHardness01>1</RigidContactsHardness01>
+	<KineticContactsHardness01>0.100000001</KineticContactsHardness01>
+	<SoftContactsHardness01>1</SoftContactsHardness01>
+	<AnchorsHardness01>1</AnchorsHardness01>
+	<MaximumVolumeRatioForPose>1</MaximumVolumeRatioForPose>
+	<TimeScale>0.100000001</TimeScale>
+	<VelocitiesSolverIterations>0</VelocitiesSolverIterations>
+	<PositionsSolverIterations>15</PositionsSolverIterations>
+	<DriftSolverIterations>0</DriftSolverIterations>
+	<ClusterSolverIterations>4</ClusterSolverIterations>
+</Physics>
+<DebugDraw>
+	<DrawSkin>1</DrawSkin>
+	<EnableWireframe>1</EnableWireframe>
+	<ShowRigidBody>1</ShowRigidBody>
+	<DrawWireframe>1</DrawWireframe>
+	<DrawAabb>0</DrawAabb>
+	<DrawFeaturesText>0</DrawFeaturesText>
+	<DrawContactPoints>0</DrawContactPoints>
+	<NoDeactivation>1</NoDeactivation>
+	<NoHelpText>0</NoHelpText>
+	<DrawText>0</DrawText>
+	<ProfileTimings>0</ProfileTimings>
+	<EnableSatComparison>0</EnableSatComparison>
+	<DisableBulletLCP>0</DisableBulletLCP>
+	<EnableCCD>0</EnableCCD>
+	<DrawConstraints>0</DrawConstraints>
+	<DrawConstraintLimits>0</DrawConstraintLimits>
+	<FastWireframe>0</FastWireframe>
+	<DrawNormals>0</DrawNormals>
+	<DrawTransform>0</DrawTransform>
+	<Nodes>0</Nodes>
+	<Links>1</Links>
+	<Faces>0</Faces>
+	<Tetras>0</Tetras>
+	<Normals>1</Normals>
+	<Contacts>0</Contacts>
+	<Anchors>0</Anchors>
+	<Notes>0</Notes>
+	<Clusters>0</Clusters>
+	<NodeTree>0</NodeTree>
+	<FaceTree>0</FaceTree>
+	<ClusterTree>0</ClusterTree>
+	<Joints>0</Joints>
+</DebugDraw>
+

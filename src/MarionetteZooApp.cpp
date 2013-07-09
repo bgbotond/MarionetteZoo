@@ -10,6 +10,10 @@
 
 #include "BulletWorld.h"
 #include "ModelManager.h"
+#include "Model.h"
+
+// for soft body test
+#include "BulletExtension/btSoftWorldImporter.h"
 
 #include "mndlkit/params/PParams.h"
 
@@ -31,6 +35,8 @@ public:
 	void draw();
 	void resize();
 	void shutdown();
+
+	void reload();
 
 protected:
 	void setupParams();
@@ -92,6 +98,8 @@ void MarionetteZooApp::setup()
 	mBulletWorld->setup();
 
 	mModelManager = ModelManagerRef( new ModelManager( mBulletWorld ) );
+
+//	ModelRef model = mModelManager->createModel( "madar", ci::Vec3f::zero(), "bird" );
 }
 
 void MarionetteZooApp::setupParams()
@@ -109,6 +117,11 @@ void MarionetteZooApp::setupParams()
 	mParams.addPersistentParam( "Fov", &mCameraFov, 45.f, "min=20 max=180 step=.1" );
 	mParams.addPersistentParam( "Eye", &mCameraEyePoint, Vec3f( 0.0f, 10.0f, -40.0f ));
 	mParams.addPersistentParam( "Center of Interest", &mCameraCenterOfInterestPoint, Vec3f( 0.0f, 10.0f, 0.0f ));
+
+	mParams.addButton( "Reload", [ this ]()
+								{
+									reload();
+								} );
 }
 
 void MarionetteZooApp::mouseDown( MouseEvent event )
@@ -203,7 +216,8 @@ void MarionetteZooApp::update()
 
 void MarionetteZooApp::draw()
 {
-	gl::clear();
+	// clear out the window with black
+	gl::clear( Colorf( 0.392, 0.392, 0.784 ));
 
 	gl::setViewport( getWindowBounds() );
 	gl::setMatrices( mMayaCam.getCamera() );
@@ -227,6 +241,36 @@ void MarionetteZooApp::resize()
 void MarionetteZooApp::shutdown()
 {
 	mndl::params::PInterfaceGl::save();
+}
+
+void MarionetteZooApp::reload()
+{
+	mBulletWorld->clear();
+
+	btSoftBulletWorldImporter worldImporter( (btSoftRigidDynamicsWorld*)mBulletWorld->getDynamicsWorld() );
+	worldImporter.loadFile( "d:/CreativeCode/projects/MarionetteZoo/assets/softbodytest.bullet" );
+
+	for( int rigidBodyIdx = 0; rigidBodyIdx < worldImporter.getNumRigidBodies(); rigidBodyIdx++ )
+	{
+		btRigidBody* rigidBody = btRigidBody::upcast( worldImporter.getRigidBodyByIndex( rigidBodyIdx ) );
+		mBulletWorld->setupRigidBody( rigidBody );
+		mBulletWorld->addRigidBody( rigidBody, true );
+	}
+
+	for( int constraintIdx = 0; constraintIdx < worldImporter.getNumConstraints(); constraintIdx++ )
+	{
+		btTypedConstraint* constraint = worldImporter.getConstraintByIndex( constraintIdx );
+		btTypedConstraintType type = constraint->getConstraintType();
+		mBulletWorld->setupConstraint( constraint );
+		mBulletWorld->addConstraint( constraint, true );
+	}
+
+	for( int softBodyIdx = 0; softBodyIdx < worldImporter.getNumSoftBodies(); softBodyIdx++ )
+	{
+		btSoftBody* softBody = worldImporter.getSoftBodyByIndex( softBodyIdx );
+		mBulletWorld->setupSoftBody( softBody );
+		mBulletWorld->addSoftBody( softBody, true );
+	}
 }
 
 CINDER_APP_NATIVE( MarionetteZooApp, RendererGl( RendererGl::AA_MSAA_4 ) )

@@ -23,7 +23,7 @@ namespace btd
 
 		ModelRef model = ModelRef( new Model( mBulletWorld, worldOffset, type ) );
 
-		mModels.insert( std::make_pair( name, model ) );
+		mModels[ name ] = model;
 
 		return model;
 	}

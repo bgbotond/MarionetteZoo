@@ -1,5 +1,4 @@
-#ifndef __BulletParameter_H__
-#define __BulletParameter_H__
+#pragma once
 
 #include "cinder/Vector.h"
 #include "mndlkit/params/PParams.h"
@@ -127,5 +126,3 @@ namespace btd
 	};
 
 } // namespace btd
-
-#endif // __BulletParameter_H__

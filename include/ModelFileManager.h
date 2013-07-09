@@ -1,5 +1,4 @@
-#ifndef __ModelFileManager_H__
-#define __ModelFileManager_H__
+#pragma once
 
 #include <string>
 #include <map>
@@ -44,5 +43,3 @@ namespace btd
 	};
 
 } // namespace btd
-
-#endif // __ModelFileManager_H__

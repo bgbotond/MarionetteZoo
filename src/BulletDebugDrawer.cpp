@@ -7,7 +7,7 @@
 namespace btd
 {
 	BulletDebugDrawer::BulletDebugDrawer()
-	: mDebugModes( 0 )
+		: mDebugModes( 0 )
 	{
 	}
 

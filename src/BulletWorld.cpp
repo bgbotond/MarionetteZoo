@@ -8,15 +8,15 @@ namespace btd
 	const float BulletWorld::CONSTRAINT_DEBUG_SIZE = 0.5f;
 
 	BulletWorld::BulletWorld()
-	: mCollisionConfiguration( NULL )
-	, mDispatcher( NULL )
-	, mBroadphase( NULL )
-	, mSolver( NULL )
-	, mSoftRigidDynamicsWorld( NULL )
-	, mBulletDebugDrawer()
-	, mBulletParameter()
-	, mBulletPicker()
-	, mShowDebugDrawRigidBody( false )
+		: mCollisionConfiguration( NULL )
+		, mDispatcher( NULL )
+		, mBroadphase( NULL )
+		, mSolver( NULL )
+		, mSoftRigidDynamicsWorld( NULL )
+		, mBulletDebugDrawer()
+		, mBulletParameter()
+		, mBulletPicker()
+		, mShowDebugDrawRigidBody( false )
 	{
 	}
 
@@ -141,26 +141,83 @@ namespace btd
 		mRigidBodies.erase( std::remove( mRigidBodies.begin(), mRigidBodies.end(), rigidBody ), mRigidBodies.end() );
 	}
 
+	void BulletWorld::destroyRigidBodyAll()
+	{
+		for( RigidBodies::iterator it = mRigidBodies.begin(); it != mRigidBodies.end(); ++it )
+		{
+			btRigidBody* rigidBody = *it;
+
+			if( rigidBody->getMotionState())
+			{
+				delete rigidBody->getMotionState();
+			}
+
+			if( rigidBody->getCollisionShape() )
+			{
+				delete rigidBody->getCollisionShape();
+			}
+
+			mSoftRigidDynamicsWorld->removeRigidBody( rigidBody );
+			delete rigidBody;
+		}
+
+		mRigidBodies.clear();
+	}
+
 	void BulletWorld::addSoftBody( btSoftBody* softBody, bool load /* = false */ )
 	{
 		if( ! load )
 			mSoftRigidDynamicsWorld->addSoftBody( softBody );
+
+		mSoftBodies.push_back( softBody );
 	}
 
 	void BulletWorld::removeSoftBody( btSoftBody* softBody )
 	{
 		mSoftRigidDynamicsWorld->removeSoftBody( softBody );
+
+		mSoftBodies.erase( std::remove( mSoftBodies.begin(), mSoftBodies.end(), softBody ), mSoftBodies.end() );
+	}
+
+	void BulletWorld::destroySoftBodyAll()
+	{
+		for( SoftBodies::iterator it = mSoftBodies.begin(); it != mSoftBodies.end(); ++it )
+		{
+			btSoftBody* softBody = *it;
+
+			mSoftRigidDynamicsWorld->removeSoftBody( softBody );
+			delete softBody;
+		}
+
+		mSoftBodies.clear();
 	}
 
 	void BulletWorld::addConstraint( btTypedConstraint* constraint, bool disableCollisionsBetweenLinkedBodies, bool load /* = false */ )
 	{
 		if( ! load )
 			mSoftRigidDynamicsWorld->addConstraint( constraint, disableCollisionsBetweenLinkedBodies );
+
+		mConstraints.push_back( constraint );
 	}
 
 	void BulletWorld::removeConstraint( btTypedConstraint* constraint )
 	{
 		mSoftRigidDynamicsWorld->removeConstraint( constraint );
+
+		mConstraints.erase( std::remove( mConstraints.begin(), mConstraints.end(), constraint ), mConstraints.end() );
+	}
+
+	void BulletWorld::destroyConstraintAll()
+	{
+		for( Constraints::iterator it = mConstraints.begin(); it != mConstraints.end(); ++it )
+		{
+			btTypedConstraint* constraint = *it;
+
+			mSoftRigidDynamicsWorld->removeConstraint( constraint );
+			delete constraint;
+		}
+
+		mConstraints.clear();
 	}
 
 	void BulletWorld::setupRigidBody( btRigidBody* rigidBody )
@@ -218,6 +275,13 @@ namespace btd
 	BulletParameterRef BulletWorld::getBulletParameter() const
 	{
 		return mBulletParameter;
+	}
+
+	void BulletWorld::clear()
+	{
+		destroyConstraintAll();
+		destroyRigidBodyAll();
+		destroySoftBodyAll();
 	}
 
 	void BulletWorld::mouseDown( ci::app::MouseEvent event, const ci::CameraPersp &cam )
