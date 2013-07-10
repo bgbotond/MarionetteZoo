@@ -36,7 +36,9 @@ public:
 	void resize();
 	void shutdown();
 
-	void reload();
+	void testSoftBody();
+	void testConstraint();
+	void testSoftBodyBone();
 
 protected:
 	void setupParams();
@@ -80,26 +82,24 @@ void MarionetteZooApp::setup()
 	mMayaCam.setCurrentCam( cam );
 
 	{
-		glEnable( GL_LIGHTING );
-		glEnable( GL_DEPTH_TEST );
-		glEnable( GL_RESCALE_NORMAL );
-
-		//create light
-		mLight = new gl::Light( gl::Light::DIRECTIONAL, 0 );
-		mLight->setAmbient( Color( 1.0f, 1.0f, 1.0f ) );
-		mLight->setDiffuse( Color( 1.0f, 1.0f, 1.0f ) );
-		mLight->setSpecular( Color( 1.0f, 1.0f, 1.0f ) );
-		mLight->setShadowParams( 100.0f, 1.0f, 20.0f );
-//		mLight->update( cam );
-//		mLight->enable();
+// 		glEnable( GL_LIGHTING );
+// 		glEnable( GL_DEPTH_TEST );
+// 		glEnable( GL_RESCALE_NORMAL );
+// 
+// 		//create light
+// 		mLight = new gl::Light( gl::Light::DIRECTIONAL, 0 );
+// 		mLight->setAmbient( Color( 1.0f, 1.0f, 1.0f ) );
+// 		mLight->setDiffuse( Color( 1.0f, 1.0f, 1.0f ) );
+// 		mLight->setSpecular( Color( 1.0f, 1.0f, 1.0f ) );
+// 		mLight->setShadowParams( 100.0f, 1.0f, 20.0f );
+// //		mLight->update( cam );
+// //		mLight->enable();
 	}
 
 	mBulletWorld = BulletWorldRef( new BulletWorld() );
 	mBulletWorld->setup();
 
 	mModelManager = ModelManagerRef( new ModelManager( mBulletWorld ) );
-
-//	ModelRef model = mModelManager->createModel( "madar", ci::Vec3f::zero(), "bird" );
 }
 
 void MarionetteZooApp::setupParams()
@@ -115,27 +115,45 @@ void MarionetteZooApp::setupParams()
 	mParams.addText( "Camera" );
 	mParams.addPersistentParam( "Lock camera (l)", &mCameraLock, false );
 	mParams.addPersistentParam( "Fov", &mCameraFov, 45.f, "min=20 max=180 step=.1" );
-	mParams.addPersistentParam( "Eye", &mCameraEyePoint, Vec3f( 0.0f, 10.0f, -40.0f ));
-	mParams.addPersistentParam( "Center of Interest", &mCameraCenterOfInterestPoint, Vec3f( 0.0f, 10.0f, 0.0f ));
+	mParams.addPersistentParam( "Eye", &mCameraEyePoint, Vec3f( 0.0f, 10.0f, -40.0f ) );
+	mParams.addPersistentParam( "Center of Interest", &mCameraCenterOfInterestPoint, Vec3f( 0.0f, 10.0f, 0.0f ) );
 
-	mParams.addButton( "Reload", [ this ]()
+	mParams.addButton( "testSoftBody", [ this ]()
 								{
-									reload();
+									testSoftBody();
+								} );
+
+	mParams.addButton( "testConstraint", [ this ]()
+								{
+									testConstraint();
+								} );
+
+	mParams.addButton( "testSoftBodyBone", [ this ]()
+								{
+									testSoftBodyBone();
 								} );
 }
 
 void MarionetteZooApp::mouseDown( MouseEvent event )
 {
-	mMayaCam.mouseDown( event.getPos() );
+	if ( mCameraLock )
+		mBulletWorld->mouseDown( event, mMayaCam.getCamera() );
+	else
+		mMayaCam.mouseDown( event.getPos() );
 }
 
 void MarionetteZooApp::mouseDrag( MouseEvent event )
 {
-	mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
+	if ( mCameraLock )
+		mBulletWorld->mouseDrag( event, mMayaCam.getCamera() );
+	else
+		mMayaCam.mouseDrag( event.getPos(), event.isLeftDown(), event.isMiddleDown(), event.isRightDown() );
 }
 
 void MarionetteZooApp::mouseUp( MouseEvent event )
 {
+	if ( mCameraLock )
+		mBulletWorld->mouseUp( event, mMayaCam.getCamera() );
 }
 
 void MarionetteZooApp::keyDown( KeyEvent event )
@@ -169,30 +187,35 @@ void MarionetteZooApp::keyDown( KeyEvent event )
 			}
 			break;
 		}
+	case KeyEvent::KEY_l:
+		{
+			mCameraLock = ! mCameraLock;
+		}
+		break;
 	case KeyEvent::KEY_LEFT:
 		{
-			mMayaCam.mouseDown( Vec2i( mStepKey, 0 ));
+			mMayaCam.mouseDown( Vec2i( mStepKey, 0 ) );
 			mMayaCam.mouseDrag( Vec2i( mStepKey, 0 ), true, false, false );
 			mMayaCam.mouseDrag( Vec2i( 0       , 0 ), true, false, false );
 		}
 		break;
 	case KeyEvent::KEY_RIGHT:
 		{
-			mMayaCam.mouseDown( Vec2i( 0       , 0 ));
+			mMayaCam.mouseDown( Vec2i( 0       , 0 ) );
 			mMayaCam.mouseDrag( Vec2i( 0       , 0 ), true, false, false );
 			mMayaCam.mouseDrag( Vec2i( mStepKey, 0 ), true, false, false );
 		}
 		break;
 	case KeyEvent::KEY_UP:
 		{
-			mMayaCam.mouseDown( Vec2i( 0, mStepKey ));
+			mMayaCam.mouseDown( Vec2i( 0, mStepKey ) );
 			mMayaCam.mouseDrag( Vec2i( 0, mStepKey ), true, false, false );
 			mMayaCam.mouseDrag( Vec2i( 0, 0        ), true, false, false );
 		}
 		break;
 	case KeyEvent::KEY_DOWN:
 		{
-			mMayaCam.mouseDown( Vec2i( 0, 0        ));
+			mMayaCam.mouseDown( Vec2i( 0, 0        ) );
 			mMayaCam.mouseDrag( Vec2i( 0, 0        ), true, false, false );
 			mMayaCam.mouseDrag( Vec2i( 0, mStepKey ), true, false, false );
 		}
@@ -200,15 +223,40 @@ void MarionetteZooApp::keyDown( KeyEvent event )
 	case KeyEvent::KEY_ESCAPE:
 		quit();
 		break;
+	default:
+		mBulletWorld->keyDown( event );
 	}
 }
 
 void MarionetteZooApp::update()
 {
 	CameraPersp cam = mMayaCam.getCamera();
+	if ( cam.getFov() != mCameraFov )
+	{
+		cam.setPerspective( mCameraFov, getWindowAspectRatio(), 0.1f, 1000.0f );
+		mMayaCam.setCurrentCam( cam );
+	}
+	if( mCameraLock )
+	{
+		if( mCameraEyePoint != cam.getEyePoint() )
+		{
+			cam.setEyePoint( mCameraEyePoint );
+			mMayaCam.setCurrentCam( cam );
+		}
+		if( mCameraCenterOfInterestPoint != cam.getCenterOfInterestPoint() )
+		{
+			cam.setCenterOfInterestPoint( mCameraCenterOfInterestPoint );
+			mMayaCam.setCurrentCam( cam );
+		}
+	}
+	else
+	{
+		mCameraEyePoint              = cam.getEyePoint();
+		mCameraCenterOfInterestPoint = cam.getCenterOfInterestPoint();
+	}
 
-	mLight->setDirection( mLightDirection * Vec3f( 1.f, 1.f, -1.f ) );
-	mLight->update( cam );
+// 	mLight->setDirection( mLightDirection * Vec3f( 1.f, 1.f, -1.f ) );
+// 	mLight->update( cam );
 
 	mBulletWorld->update();
 	mModelManager->update();
@@ -216,7 +264,8 @@ void MarionetteZooApp::update()
 
 void MarionetteZooApp::draw()
 {
-	gl::clear( Colorf( 0.392, 0.392, 0.784 ));
+	// clear out the window with black
+	gl::clear( Colorf( 0.392, 0.392, 0.784 ) );
 
 	gl::setViewport( getWindowBounds() );
 	gl::setMatrices( mMayaCam.getCamera() );
@@ -224,10 +273,14 @@ void MarionetteZooApp::draw()
 	gl::enableDepthRead();
 	gl::enableDepthWrite();
 
+	ci::gl::pushMatrices();
 	mBulletWorld->draw();
+	ci::gl::popMatrices();
 	mModelManager->draw();
 
 	mParams.draw();
+
+	ci::gl::drawCoordinateFrame();
 }
 
 void MarionetteZooApp::resize()
@@ -242,34 +295,22 @@ void MarionetteZooApp::shutdown()
 	mndl::params::PInterfaceGl::save();
 }
 
-void MarionetteZooApp::reload()
+void MarionetteZooApp::testSoftBody()
 {
-	mBulletWorld->clear();
+	mModelManager->destroyModelAll();
+	mModelManager->createModel( "test_softbody", ci::Vec3f::zero(), "test_softbody" );
+}
 
-	btSoftBulletWorldImporter worldImporter( (btSoftRigidDynamicsWorld*)mBulletWorld->getDynamicsWorld() );
-	worldImporter.loadFile( app::getAssetPath( "softbodytest_small_rectangle.bullet" ).string().c_str() );
+void MarionetteZooApp::testConstraint()
+{
+	mModelManager->destroyModelAll();
+	mModelManager->createModel( "test_constraint", ci::Vec3f::zero(), "test_constraint" );
+}
 
-	for( int rigidBodyIdx = 0; rigidBodyIdx < worldImporter.getNumRigidBodies(); rigidBodyIdx++ )
-	{
-		btRigidBody* rigidBody = btRigidBody::upcast( worldImporter.getRigidBodyByIndex( rigidBodyIdx ) );
-		mBulletWorld->setupRigidBody( rigidBody );
-		mBulletWorld->addRigidBody( rigidBody, true );
-	}
-
-	for( int constraintIdx = 0; constraintIdx < worldImporter.getNumConstraints(); constraintIdx++ )
-	{
-		btTypedConstraint* constraint = worldImporter.getConstraintByIndex( constraintIdx );
-		//btTypedConstraintType type = constraint->getConstraintType();
-		mBulletWorld->setupConstraint( constraint );
-		mBulletWorld->addConstraint( constraint, true, true );
-	}
-
-	for( int softBodyIdx = 0; softBodyIdx < worldImporter.getNumSoftBodies(); softBodyIdx++ )
-	{
-		btSoftBody* softBody = worldImporter.getSoftBodyByIndex( softBodyIdx );
-		mBulletWorld->setupSoftBody( softBody );
-		mBulletWorld->addSoftBody( softBody, true );
-	}
+void MarionetteZooApp::testSoftBodyBone()
+{
+	mModelManager->destroyModelAll();
+	mModelManager->createModel( "test_softbody_bone", ci::Vec3f::zero(), "test_softbody_bone" );
 }
 
 CINDER_APP_NATIVE( MarionetteZooApp, RendererGl( RendererGl::AA_MSAA_4 ) )

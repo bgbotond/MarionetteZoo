@@ -5,7 +5,10 @@ namespace btd
 {
 	ModelFileManager::ModelFileManager()
 	{
-		registerModel( "bird", "bird.dae", "bird.bullet", "bird.xml" );
+//		registerModel( "bird", "bird.dae", "bird.bullet", "bird.xml" );
+		registerModel( "test_softbody"     , "softbody8_1kotel.dae"  , "softbody8_1kotel.bullet"  , "nothing.xml" );
+		registerModel( "test_constraint"   , "testconstraint.dae"    , "testconstraint.bullet"    , "nothing.xml" );
+		registerModel( "test_softbody_bone", "softbody10_csontos.dae", "softbody10_csontos.bullet", "nothing.xml" );
 
 		// here we can add more models
 	}

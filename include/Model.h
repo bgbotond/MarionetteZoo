@@ -7,7 +7,7 @@
 
 #include "mndlkit/params/PParams.h"
 
-class btBulletWorldImporter;
+class btSoftBulletWorldImporter;
 class RigidBody;
 class btTypedConstraint;
 
@@ -16,9 +16,14 @@ namespace btd
 	typedef std::shared_ptr< class Model      > ModelRef;
 	typedef std::shared_ptr< class Bone       > BoneRef;
 	typedef std::shared_ptr< class Constraint > ConstraintRef;
+	typedef std::shared_ptr< class String     > StringRef;
 
 	class Model
 	{
+		typedef std::vector< BoneRef       > Bones;
+		typedef std::vector< ConstraintRef > Constraints;
+		typedef std::vector< StringRef     > Strings;
+
 	public:
 		Model( const BulletWorldRef& bulletWorld, const ci::Vec3f& worldOffset, const std::string& type );
 		~Model();
@@ -30,8 +35,9 @@ namespace btd
 
 	protected:
 		void loadBullet( const ci::fs::path& bulletFile );
-		void handleLoadRigidBodies( btBulletWorldImporter* worldImporter );
-		void handleLoadConstraints( btBulletWorldImporter* worldImporter );
+		void handleLoadRigidBodies( btSoftBulletWorldImporter* worldImporter );
+		void handleLoadConstraints( btSoftBulletWorldImporter* worldImporter );
+		void handleLoadSoftBodies(  btSoftBulletWorldImporter* worldImporter );
 
 		BoneRef getBone( btRigidBody* rigidBody );
 
@@ -40,32 +46,34 @@ namespace btd
 
 		mndl::assimp::AssimpLoaderRef mAssimpLoader;
 
-		std::vector< BoneRef >        mBones;
-		std::vector< ConstraintRef >  mConstraints;
+		Bones                         mBones;
+		Constraints                   mConstraints;
+		Strings                       mStrings;
 	};
 
-	// TODO make class to subclass of Model
+	// TODO make weak_ptr from Model*
 	class Bone
 	{
 	public:
-		Bone( const ModelRef& owner, const mndl::NodeRef& node, btRigidBody* rigidBody );
+		Bone( Model* owner, const mndl::NodeRef& node, btRigidBody* rigidBody );
 		~Bone();
 
 		mndl::NodeRef     getNode() const;
 		btRigidBody*      getRigidBody() const;
 
-		void              update();
+		void              synchronize();
 
 	protected:
-		ModelRef          mOwner;
+		Model*            mOwner;
 		mndl::NodeRef     mNode;
 		btRigidBody*      mRigidBody;
 	};
 
+	// TODO make weak_ptr from Model*
 	class Constraint
 	{
 	public:
-		Constraint( const ModelRef& owner, const BoneRef& boneA, const BoneRef& boneB, btTypedConstraint* constraint );
+		Constraint( Model* owner, const BoneRef& boneA, const BoneRef& boneB, btTypedConstraint* constraint );
 		~Constraint();
 
 		BoneRef            getBoneA() const;
@@ -73,12 +81,30 @@ namespace btd
 		btTypedConstraint* getConstraint() const;
 
 	protected:
-		ModelRef           mOwner;
+		Model*             mOwner;
 		BoneRef            mBoneA;
 		BoneRef            mBoneB;
 		btTypedConstraint* mConstraint;
 	};
 
-	// TODO make other class for String and CrossBar
+	// TODO make weak_ptr from Model*
+	class String
+	{
+	public:
+		String( Model* owner, btSoftBody* softBody );
+		~String();
+
+//		mndl::NodeRef     getNode() const;
+		btSoftBody*       getSoftBody() const;
+
+		void              synchronize();
+
+	protected:
+		Model*            mOwner;
+//		mndl::NodeRef     mNode;
+		btSoftBody*       mSoftBody;
+	};
+
+	// TODO make other class for CrossBar
 
 } // namespace btd

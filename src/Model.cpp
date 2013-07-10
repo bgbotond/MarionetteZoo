@@ -11,6 +11,7 @@
 
 #include "Extras/Serialize/BulletFileLoader/bFile.h"
 #include "Extras/Serialize/BulletWorldImporter/btBulletWorldImporter.h"
+#include "BulletExtension/btSoftWorldImporter.h"
 
 namespace btd
 {
@@ -21,17 +22,17 @@ namespace btd
 		, mConstraints()
 	{
 		mAssimpLoader = mndl::assimp::AssimpLoaderRef( new mndl::assimp::AssimpLoader( ModelFileManager::getSingleton().getModelFile( type ) ) );
-		mAssimpLoader->enableSkinning( true );
-		mAssimpLoader->enableAnimation( true );
+// 		mAssimpLoader->enableSkinning( true );
+// 		mAssimpLoader->enableAnimation( true );
 
 		// TODO apply the worldOffset to place it in special position
 
 		loadBullet( ModelFileManager::getSingleton().getBulletFile( type ) );
 	}
 
-	// TODO
 	Model::~Model()
 	{
+		// do nothing
 	}
 
 	void Model::update( const ci::Vec3f& pos, const ci::Vec3f& dir, const ci::Vec3f& norm )
@@ -39,7 +40,7 @@ namespace btd
 		for( auto it = mBones.begin(); it != mBones.end(); ++it )
 		{
 			BoneRef bone = *it;;
-			bone->update();
+			bone->synchronize();
 		}
 
 		mAssimpLoader->update();
@@ -61,6 +62,8 @@ namespace btd
 		}
 
 		// TODO draw strings (SoftBody)
+		// how to calculate the positions of the string
+
 	}
 
 	BulletWorldRef& Model::getBulletWorld()
@@ -70,24 +73,25 @@ namespace btd
 
 	void Model::loadBullet( const ci::fs::path& bulletFile )
 	{
-		btBulletWorldImporter worldImporter( mBulletWorld->getDynamicsWorld() );
+		btSoftBulletWorldImporter worldImporter( (btSoftRigidDynamicsWorld*)mBulletWorld->getDynamicsWorld() );
 
 		worldImporter.loadFile( bulletFile.string().c_str());
 
 		handleLoadRigidBodies( &worldImporter );
 		handleLoadConstraints( &worldImporter );
+		handleLoadSoftBodies(  &worldImporter );
 	}
 
-	void Model::handleLoadRigidBodies( btBulletWorldImporter* worldImporter )
+	void Model::handleLoadRigidBodies( btSoftBulletWorldImporter* worldImporter )
 	{
 		for( int rigidBodyIdx = 0; rigidBodyIdx < worldImporter->getNumRigidBodies(); rigidBodyIdx++ )
 		{
 			btRigidBody* rigidBody = btRigidBody::upcast( worldImporter->getRigidBodyByIndex( rigidBodyIdx ) );
 			std::string name = worldImporter->getNameForPointer( rigidBody );
 
-			// all the rigid body start with rb_ prefix.
+			// all the rigid body starts with rb_ prefix.
 			assert( name.substr( 0, 3 ) == "rb_" );
-			name = name.substr( 3, name.npos );
+//			name = name.substr( 3, name.npos );
 
 			mBulletWorld->setupRigidBody( rigidBody );
 			mBulletWorld->addRigidBody( rigidBody, true );
@@ -95,12 +99,12 @@ namespace btd
 			// All the rigid body name should match with the .dae file bones.
 			mndl::assimp::AssimpNodeRef node = mAssimpLoader->getAssimpNode( name );
 
-			BoneRef bone = BoneRef( new Bone( ModelRef( this ), node, rigidBody ) );
+			BoneRef bone = BoneRef( new Bone( this, node, rigidBody ) );
 			mBones.push_back( bone );
 		}
 	}
 
-	void Model::handleLoadConstraints( btBulletWorldImporter* worldImporter )
+	void Model::handleLoadConstraints( btSoftBulletWorldImporter* worldImporter )
 	{
 		for( int constraintIdx = 0; constraintIdx < worldImporter->getNumConstraints(); constraintIdx++ )
 		{
@@ -108,7 +112,7 @@ namespace btd
 			assert( typedConstraint->getConstraintType() == CONETWIST_CONSTRAINT_TYPE );
 
 			mBulletWorld->setupConstraint( typedConstraint );
-			mBulletWorld->addConstraint( typedConstraint, true );
+			mBulletWorld->addConstraint( typedConstraint, true, true );
 
 			btRigidBody* rigidBodyA = &typedConstraint->getRigidBodyA();
 			btRigidBody* rigidBodyB = &typedConstraint->getRigidBodyB();
@@ -116,9 +120,29 @@ namespace btd
 			BoneRef boneA = getBone( rigidBodyA );
 			BoneRef boneB = getBone( rigidBodyB );
 
-			// TODO how to convert this to shared_ptr
-			ConstraintRef constraint = ConstraintRef( new Constraint( ModelRef( this ), boneA, boneB, typedConstraint ) );
+			ConstraintRef constraint = ConstraintRef( new Constraint( this, boneA, boneB, typedConstraint ) );
 			mConstraints.push_back( constraint );
+		}
+	}
+
+	void Model::handleLoadSoftBodies( btSoftBulletWorldImporter* worldImporter )
+	{
+		for( int softBodyIdx = 0; softBodyIdx < worldImporter->getNumSoftBodies(); softBodyIdx++ )
+		{
+			btSoftBody* softBody = worldImporter->getSoftBodyByIndex( softBodyIdx );
+
+			// the SoftBody names are not loaded by the worldImporter
+// 			std::string name = worldImporter->getNameForPointer( softBody );
+// 
+// 			// all the soft body starts with sb_ prefix.
+// 			assert( name.substr( 0, 3 ) == "sb_" );
+// 			name = name.substr( 3, name.npos );
+
+			mBulletWorld->setupSoftBody( softBody );
+			mBulletWorld->addSoftBody( softBody, true );
+
+			StringRef string = StringRef( new String( this, softBody ) );
+			mStrings.push_back( string );
 		}
 	}
 
@@ -138,7 +162,7 @@ namespace btd
 	}
 
 
-	Bone::Bone( const ModelRef& owner, const mndl::NodeRef& node, btRigidBody* rigidBody )
+	Bone::Bone( Model* owner, const mndl::NodeRef& node, btRigidBody* rigidBody )
 		: mOwner( owner )
 		, mNode( node )
 		, mRigidBody( rigidBody )
@@ -172,18 +196,18 @@ namespace btd
 	}
 
 	// synchronize the bullet world to graphics
-	void Bone::update()
+	void Bone::synchronize()
 	{
 		const btTransform& centerOfMassTransform = getRigidBody()->getCenterOfMassTransform();
 
 		ci::Vec3f pos = fromBullet( centerOfMassTransform.getOrigin()   );
 		ci::Quatf rot = fromBullet( centerOfMassTransform.getRotation() );
 
-		getNode()->setPosition(    pos );
-		getNode()->setOrientation( rot );
+		getNode()->setPosition(    getNode()->convertWorldToLocalPosition(    pos ) );
+		getNode()->setOrientation( getNode()->convertWorldToLocalOrientation( rot ) );
 	}
 
-	Constraint::Constraint( const ModelRef& owner, const BoneRef& boneA, const BoneRef& boneB, btTypedConstraint* constraint )
+	Constraint::Constraint( Model* owner, const BoneRef& boneA, const BoneRef& boneB, btTypedConstraint* constraint )
 		: mOwner( owner )
 		, mBoneA( boneA )
 		, mBoneB( boneB )
@@ -191,10 +215,11 @@ namespace btd
 	{
 	}
 
-	// TODO
 	Constraint::~Constraint()
 	{
 		mOwner->getBulletWorld()->removeConstraint( mConstraint );
+
+		delete mConstraint;
 	}
 
 	BoneRef Constraint::getBoneA() const
@@ -210,6 +235,24 @@ namespace btd
 	btTypedConstraint* Constraint::getConstraint() const
 	{
 		return mConstraint;
+	}
+
+	String::String( Model* owner, btSoftBody* softBody )
+		: mOwner( owner )
+		, mSoftBody( softBody )
+	{
+	}
+
+	String::~String()
+	{
+		mOwner->getBulletWorld()->removeSoftBody( mSoftBody );
+
+		delete mSoftBody;
+	}
+
+	btSoftBody* String::getSoftBody() const
+	{
+		return mSoftBody;
 	}
 
 } // namespace btd

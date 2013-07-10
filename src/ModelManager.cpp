@@ -38,6 +38,11 @@ namespace btd
 		mModels.erase( it );
 	}
 
+	void ModelManager::destroyModelAll()
+	{
+		mModels.clear();
+	}
+
 	ModelRef ModelManager::getModel( const std::string& name )
 	{
 		Models::iterator it = findModel( name );
@@ -47,10 +52,14 @@ namespace btd
 
 		return ModelRef();
 	}
-
+	
+	// TODO this should be deleted and managed by the controller who connects the hand and ModelRef.
 	void ModelManager::update()
 	{
-		// TODO how update gets the current hand information?
+		for( auto it = mModels.begin(); it != mModels.end(); ++it )
+		{
+			it->second->update( ci::Vec3f::zero(), ci::Vec3f::zero(), ci::Vec3f::zero() );
+		}
 	}
 
 	void ModelManager::draw()

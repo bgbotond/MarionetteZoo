@@ -106,12 +106,6 @@ namespace btd
 
 	void BulletWorld::donePhysics()
 	{
-// 		for( int i = 0; i < mAssimpModels.size(); ++i )
-// 		{
-// 			AssimpModel *assimpModel = mAssimpModels[ i ];
-// 			delete assimpModel;
-// 		}
-
 		mSoftRigidDynamicsWorld->setDebugDrawer( 0 );
 
 		delete mSoftRigidDynamicsWorld;

@@ -22,6 +22,7 @@ namespace btd
 
 		ModelRef createModel( const std::string& name, const ci::Vec3f& worldOffset, const std::string& type );
 		void     destroyModel( const std::string& name );
+		void     destroyModelAll();
 		ModelRef getModel( const std::string& name );
 
 		// TODO how update gets the current hand information?
