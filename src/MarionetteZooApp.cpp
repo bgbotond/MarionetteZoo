@@ -216,7 +216,6 @@ void MarionetteZooApp::update()
 
 void MarionetteZooApp::draw()
 {
-	// clear out the window with black
 	gl::clear( Colorf( 0.392, 0.392, 0.784 ));
 
 	gl::setViewport( getWindowBounds() );
@@ -248,7 +247,7 @@ void MarionetteZooApp::reload()
 	mBulletWorld->clear();
 
 	btSoftBulletWorldImporter worldImporter( (btSoftRigidDynamicsWorld*)mBulletWorld->getDynamicsWorld() );
-	worldImporter.loadFile( ci::app::App::get()->getAssetPath( "softbodytest_small_rectangle.bullet" ).string().c_str() );
+	worldImporter.loadFile( app::getAssetPath( "softbodytest_small_rectangle.bullet" ).string().c_str() );
 
 	for( int rigidBodyIdx = 0; rigidBodyIdx < worldImporter.getNumRigidBodies(); rigidBodyIdx++ )
 	{
@@ -260,7 +259,7 @@ void MarionetteZooApp::reload()
 	for( int constraintIdx = 0; constraintIdx < worldImporter.getNumConstraints(); constraintIdx++ )
 	{
 		btTypedConstraint* constraint = worldImporter.getConstraintByIndex( constraintIdx );
-		btTypedConstraintType type = constraint->getConstraintType();
+		//btTypedConstraintType type = constraint->getConstraintType();
 		mBulletWorld->setupConstraint( constraint );
 		mBulletWorld->addConstraint( constraint, true, true );
 	}
