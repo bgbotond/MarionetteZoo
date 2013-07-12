@@ -1,13 +1,17 @@
 #pragma warning (disable : 4996)
 
-#include <map>
 #include <assert.h>
+
 #include "cinder/app/App.h"
 #include "cinder/Vector.h"
+#include "cinder/Xml.h"
+#include "cinder/Rand.h"
+
 #include "BulletConverter.h"
 #include "Model.h"
 #include "BulletWorld.h"
 #include "ModelFileManager.h"
+#include "GlobalData.h"
 
 #include "Extras/Serialize/BulletFileLoader/bFile.h"
 #include "Extras/Serialize/BulletWorldImporter/btBulletWorldImporter.h"
@@ -28,6 +32,7 @@ namespace btd
 		// TODO apply the worldOffset to place it in special position
 
 		loadBullet( ModelFileManager::getSingleton().getBulletFile( type ) );
+		loadActions( ModelFileManager::getSingleton().getActionFile( type ) );
 	}
 
 	Model::~Model()
@@ -69,6 +74,34 @@ namespace btd
 	BulletWorldRef& Model::getBulletWorld()
 	{
 		return mBulletWorld;
+	}
+
+	unsigned int Model::getNumActions() const
+	{
+		return mActions.size();
+	}
+
+	std::vector< std::string > Model::getNameActions()
+	{
+		std::vector< std::string > actionNames;
+
+		for( auto it = mActions.begin(); it != mActions.end(); ++it )
+		{
+			ActionRef action = *it;
+			actionNames.push_back( action->getName() );
+		}
+
+		return actionNames;
+	}
+
+	void Model::doAction( unsigned int pos )
+	{
+		if( pos >= getNumActions() )
+			return;
+
+		ActionRef action = mActions[ pos ];
+
+		action->doAction();
 	}
 
 	void Model::loadBullet( const ci::fs::path& bulletFile )
@@ -146,6 +179,73 @@ namespace btd
 		}
 	}
 
+	void Model::loadActions( const ci::fs::path& actionFile )
+	{
+		ci::XmlTree doc( ci::loadFile( actionFile ) );
+
+		if( ! doc.hasChild( "MarionettZoo" ) )
+			return;
+
+		ci::XmlTree& node = doc.getChild( "MarionettZoo" );
+
+		if( node.hasChild( "Actions" ))
+		{
+			ci::XmlTree& nodeActions = doc.getChild( "Actions" );
+
+			for( auto it = nodeActions.begin(); it != nodeActions.end(); ++it )
+			{
+				if( node.hasChild( "Action" ))
+				{
+					loadAction( doc.getChild( "Action" ) );
+				}
+			}
+		}
+	}
+
+	void Model::loadAction( const ci::XmlTree& node )
+	{
+		std::string name = node.getAttributeValue< std::string >( "name", "" );
+
+		ActionRef action = ActionRef( new Action( name ) );
+
+		for( auto child = node.begin(); child != node.end(); ++child )
+		{
+			if( child->getTag() == "Bone" )
+			{
+				std::string nameBone = child->getAttributeValue<std::string>( "name", "" );
+				float       rotateX  = child->getAttributeValue<float>( "rotateX", 0.0 );
+				float       rotateY  = child->getAttributeValue<float>( "rotateY", 0.0 );
+				float       rotateZ  = child->getAttributeValue<float>( "rotateZ", 0.0 );
+
+				BoneRef   bone    = getBone( nameBone );
+				ci::Vec3f impulse = ci::Vec3f( rotateX, rotateY, rotateZ );
+
+				action->addAnimation( bone, impulse );
+			}
+			else if( child->getTag() == "sound")
+			{
+				action->addSound( child->getValue() );
+			}
+		}
+
+		mActions.push_back( action );
+	}
+
+	BoneRef Model::getBone( const std::string& name )
+	{
+		for( auto it = mBones.begin(); it != mBones.end(); ++it )
+		{
+			BoneRef bone = *it;
+
+			if( name == bone->getNode()->getName() )
+				return bone;
+		}
+
+		assert( 0 );
+
+		return BoneRef();
+	}
+
 	BoneRef Model::getBone( btRigidBody* rigidBody )
 	{
 		for( auto it = mBones.begin(); it != mBones.end(); ++it )
@@ -160,7 +260,6 @@ namespace btd
 
 		return BoneRef();
 	}
-
 
 	Bone::Bone( Model* owner, const mndl::NodeRef& node, btRigidBody* rigidBody )
 		: mOwner( owner )
@@ -253,6 +352,70 @@ namespace btd
 	btSoftBody* String::getSoftBody() const
 	{
 		return mSoftBody;
+	}
+
+	Action::Action( const std::string& name )
+		: mName( name )
+		, mAnimations()
+		, mSounds()
+	{
+	}
+
+	Action::~Action()
+	{
+		// do nothing
+	}
+
+	const std::string& Action::getName() const
+	{
+		return mName;
+	}
+
+	void Action::doAction()
+	{
+		if( ! getNumSounds() )
+			GlobalData::getSingleton().mAudio.play( mSounds[ ci::Rand::randInt( mSounds.size() ) ] );
+
+		for( auto it = mAnimations.begin(); it != mAnimations.end(); ++it )
+		{
+			BoneRef   bone    = it->first;
+			ci::Vec3f impulse = it->second;
+
+			// TODO need to check when we have test data
+			ci::Vec3f relPos = ci::Vec3f::yAxis() * bone->getNode()->getDerivedOrientation();
+			ci::Vec3f force  = relPos.cross( impulse );
+			bone->getRigidBody()->applyTorqueImpulse( toBullet( force ) );
+		}
+	}
+
+	void Action::addAnimation( const BoneRef& bone, const ci::Vec3f& impulse )
+	{
+		mAnimations[ bone ] = impulse;
+	}
+
+	unsigned int Action::getNumAnimations() const
+	{
+		return mAnimations.size();
+	}
+
+	const Action::Animations& Action::getAnimations() const
+	{
+		return mAnimations;
+	}
+
+	void Action::addSound( const std::string& soundName )
+	{
+		mSounds.push_back( soundName );
+	}
+
+	unsigned int Action::getNumSounds() const
+	{
+		return mSounds.size();
+	}
+
+	const Action::Sounds& Action::getSounds() const
+	{
+		return mSounds;
 	}
 
 } // namespace btd

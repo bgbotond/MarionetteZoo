@@ -107,6 +107,7 @@
     <ClCompile Include="..\..\..\cinder_0.8.5\blocks\Cinder-Assimp\src\Node.cpp" />
     <ClCompile Include="..\..\..\cinder_0.8.5\blocks\Cinder-OpenAL\src\OpenALAudio.cpp" />
     <ClCompile Include="..\..\..\cinder_0.8.5\blocks\MndlKit\src\mndlkit\params\PParams.cpp" />
+    <ClCompile Include="..\src\Audio.cpp" />
     <ClCompile Include="..\src\BulletDebugDrawer.cpp" />
     <ClCompile Include="..\src\BulletExtension\btSoftWorldImporter.cpp" />
     <ClCompile Include="..\src\BulletParameter.cpp" />
@@ -126,12 +127,14 @@
     <ClInclude Include="..\..\..\cinder_0.8.5\blocks\Cinder-Leap\include\LeapMath.h" />
     <ClInclude Include="..\..\..\cinder_0.8.5\blocks\Cinder-OpenAL\src\OpenALAudio.h" />
     <ClInclude Include="..\..\..\cinder_0.8.5\blocks\MndlKit\src\mndlkit\params\PParams.h" />
+    <ClInclude Include="..\include\Audio.h" />
     <ClInclude Include="..\include\BulletExtension\btSoftWorldImporter.h" />
     <ClInclude Include="..\include\BulletParameter.h" />
     <ClInclude Include="..\include\BulletPicker.h" />
     <ClInclude Include="..\include\BulletWorld.h" />
     <ClInclude Include="..\include\BulletDebugDrawer.h" />
     <ClInclude Include="..\include\BulletConverter.h" />
+    <ClInclude Include="..\include\GlobalData.h" />
     <ClInclude Include="..\include\Model.h" />
     <ClInclude Include="..\include\ModelFileManager.h" />
     <ClInclude Include="..\include\ModelManager.h" />

@@ -90,6 +90,9 @@
     <ClCompile Include="..\src\BulletExtension\btSoftWorldImporter.cpp">
       <Filter>Source Files\BulletExtension</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Audio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\BulletWorld.h">
@@ -97,6 +100,12 @@
     </ClInclude>
     <ClInclude Include="..\include\BulletExtension\btSoftWorldImporter.h">
       <Filter>Header Files\BulletExtension</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\GlobalData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Audio.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
