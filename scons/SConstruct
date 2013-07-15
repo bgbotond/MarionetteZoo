@@ -1,16 +1,13 @@
 env = Environment()
 
 env['APP_TARGET'] = 'MarionetteZooApp'
-env['APP_SOURCES'] = ['BulletDebugDrawer.cpp', 'BulletPicker.cpp',
+env['APP_SOURCES'] = ['Audio.cpp', 'BulletDebugDrawer.cpp', 'BulletPicker.cpp',
 					'BulletExtension/btSoftWorldImporter.cpp',
 					'MarionetteZooApp.cpp', 'ModelFileManager.cpp',
 					'BulletParameter.cpp', 'BulletWorld.cpp',
 					'Model.cpp', 'ModelManager.cpp']
 
-env['ASSETS'] = ['tomi1.jpg', 'bird.dae', 'bird.xml', 'softbodytest_small_rectangle.bullet',
-				"softbody8_1kotel.dae", "softbody8_1kotel.bullet",
-				"testconstraint.dae", "testconstraint.bullet",
-				"softbody10_csontos.dae", "softbody10_csontos.bullet"]
+env['ASSETS'] = ['tomi1.jpg', '*.dae', '*.xml', '*.bullet']
 
 
 env['DEBUG'] = 0
@@ -18,5 +15,6 @@ env['DEBUG'] = 0
 env = SConscript('../../../blocks/MndlKit/scons/SConscript', exports = 'env')
 env = SConscript('../../../blocks/Cinder-Assimp/scons/SConscript', exports = 'env')
 env = SConscript('../../../blocks/Cinder-Bullet/scons/SConscript', exports = 'env')
+env = SConscript('../../../blocks/Cinder-OpenAL/scons/SConscript', exports = 'env')
 
 SConscript('../../../scons/SConscript', exports = 'env')
