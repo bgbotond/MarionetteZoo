@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "cinder/app/App.h"
 #include "cinder/app/MouseEvent.h"
 #include "cinder/Camera.h"
@@ -10,7 +11,6 @@
 #include "BulletDebugDrawer.h"
 #include "BulletPicker.h"
 #include "BulletParameter.h"
-//#include "AssimpModel.h"
 #include "mndlkit/params/PParams.h"
 
 namespace btd

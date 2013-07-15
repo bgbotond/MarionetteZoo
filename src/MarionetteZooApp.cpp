@@ -39,6 +39,7 @@ public:
 	void testSoftBody();
 	void testConstraint();
 	void testSoftBodyBone();
+	void testSoftBodyBoneColshape();
 
 protected:
 	void setupParams();
@@ -131,6 +132,11 @@ void MarionetteZooApp::setupParams()
 	mParams.addButton( "testSoftBodyBone", [ this ]()
 								{
 									testSoftBodyBone();
+								} );
+
+	mParams.addButton( "testSoftBodyBoneColshape", [ this ]()
+								{
+									testSoftBodyBoneColshape();
 								} );
 }
 
@@ -311,6 +317,12 @@ void MarionetteZooApp::testSoftBodyBone()
 {
 	mModelManager->destroyModelAll();
 	mModelManager->createModel( "test_softbody_bone", ci::Vec3f::zero(), "test_softbody_bone" );
+}
+
+void MarionetteZooApp::testSoftBodyBoneColshape()
+{
+	mModelManager->destroyModelAll();
+	mModelManager->createModel( "simple_test", ci::Vec3f::zero(), "simple_test" );
 }
 
 CINDER_APP_NATIVE( MarionetteZooApp, RendererGl( RendererGl::AA_MSAA_4 ) )

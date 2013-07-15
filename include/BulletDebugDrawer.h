@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "btBulletCollisionCommon.h"
 
 namespace btd

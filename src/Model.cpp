@@ -48,6 +48,12 @@ namespace btd
 			bone->synchronize();
 		}
 
+		for( auto it = mStrings.begin(); it != mStrings.end(); ++it )
+		{
+			StringRef string = *it;
+			string->synchronize();
+		}
+
 		mAssimpLoader->update();
 
 		// TODO update CrossBar
@@ -67,8 +73,7 @@ namespace btd
 		}
 
 		// TODO draw strings (SoftBody)
-		// how to calculate the positions of the string
-
+		// position of the string should be calculated in String::synchrinize
 	}
 
 	BulletWorldRef& Model::getBulletWorld()
@@ -122,9 +127,8 @@ namespace btd
 			btRigidBody* rigidBody = btRigidBody::upcast( worldImporter->getRigidBodyByIndex( rigidBodyIdx ) );
 			std::string name = worldImporter->getNameForPointer( rigidBody );
 
-			// all the rigid body starts with rb_ prefix.
+			// all the rigid body should start with "rb_" prefix.
 			assert( name.substr( 0, 3 ) == "rb_" );
-//			name = name.substr( 3, name.npos );
 
 			mBulletWorld->setupRigidBody( rigidBody );
 			mBulletWorld->addRigidBody( rigidBody, true );
@@ -166,15 +170,31 @@ namespace btd
 
 			// the SoftBody names are not loaded by the worldImporter
 // 			std::string name = worldImporter->getNameForPointer( softBody );
-// 
-// 			// all the soft body starts with sb_ prefix.
-// 			assert( name.substr( 0, 3 ) == "sb_" );
-// 			name = name.substr( 3, name.npos );
+
+			// it should link two RigidBodies
+			assert( softBody->m_anchors.size() == 2 );
+
+			BoneRef bone0 = getBone( softBody->m_anchors[ 0 ].m_body );
+			BoneRef bone1 = getBone( softBody->m_anchors[ 1 ].m_body );
+
+			// string name should be one of the RigidBody name it links but with "sb_" prefix instead of "rb_" prefix
+			std::string name = bone0->getNode()->getName();
+			mndl::assimp::AssimpNodeRef nodeString = mAssimpLoader->getAssimpNode( std::string( "sb_" ) + name.substr( 3, name.npos ) );
+			if( ! nodeString )
+			{
+				name = bone1->getNode()->getName();
+				nodeString = mAssimpLoader->getAssimpNode( std::string( "sb_" ) + name.substr( 3, name.npos ) );
+			}
+
+			assert( nodeString );
+			assert( nodeString->mMeshes.size() == 1 ); // should contain only one mesh
+			mndl::assimp::AssimpMeshRef mesh = *nodeString->mMeshes.begin();
+			assert( softBody->m_nodes.size() == mesh->mAnimatedPos.size() ); // softBody vertex size should be the same as node mesh vertex size
 
 			mBulletWorld->setupSoftBody( softBody );
 			mBulletWorld->addSoftBody( softBody, true );
 
-			StringRef string = StringRef( new String( this, softBody ) );
+			StringRef string = StringRef( new String( this, nodeString, softBody ) );
 			mStrings.push_back( string );
 		}
 	}
@@ -261,11 +281,25 @@ namespace btd
 		return BoneRef();
 	}
 
-	Bone::Bone( Model* owner, const mndl::NodeRef& node, btRigidBody* rigidBody )
+	Bone::Bone( Model* owner, const mndl::assimp::AssimpNodeRef& node, btRigidBody* rigidBody )
 		: mOwner( owner )
 		, mNode( node )
 		, mRigidBody( rigidBody )
+		, mTransform()
 	{
+		const btTransform& centerOfMassTransform = rigidBody->getCenterOfMassTransform();
+
+		ci::Vec3f posBullet = fromBullet( centerOfMassTransform.getOrigin()   );
+		ci::Quatf rotBullet = fromBullet( centerOfMassTransform.getRotation() );
+
+		ci::Vec3f posAssimp = node->convertLocalToWorldPosition(    node->getPosition()    );
+		ci::Quatf rotAssimp = node->convertLocalToWorldOrientation( node->getOrientation() );
+
+		ci::Vec3f posAssimp2 = node->getDerivedPosition();
+		ci::Quatf rotAssimp2 = node->getDerivedOrientation();
+
+		// TODO get the transformation between AssimpNode and RigidBody calculate mTransform
+// 		mTransform = ???
 	}
 
 	Bone::~Bone()
@@ -284,7 +318,7 @@ namespace btd
 		delete mRigidBody;
 	}
 
-	mndl::NodeRef Bone::getNode() const
+	mndl::assimp::AssimpNodeRef Bone::getNode() const
 	{
 		return mNode;
 	}
@@ -294,6 +328,11 @@ namespace btd
 		return mRigidBody;
 	}
 
+	ci::Matrix44f Bone::getTransform() const
+	{
+		return mTransform;
+	}
+
 	// synchronize the bullet world to graphics
 	void Bone::synchronize()
 	{
@@ -301,6 +340,8 @@ namespace btd
 
 		ci::Vec3f pos = fromBullet( centerOfMassTransform.getOrigin()   );
 		ci::Quatf rot = fromBullet( centerOfMassTransform.getRotation() );
+
+		// TODO use mTransform in synchronize
 
 		getNode()->setPosition(    getNode()->convertWorldToLocalPosition(    pos ) );
 		getNode()->setOrientation( getNode()->convertWorldToLocalOrientation( rot ) );
@@ -336,8 +377,9 @@ namespace btd
 		return mConstraint;
 	}
 
-	String::String( Model* owner, btSoftBody* softBody )
+	String::String( Model* owner, const mndl::assimp::AssimpNodeRef& node, btSoftBody* softBody )
 		: mOwner( owner )
+		, mNode( node )
 		, mSoftBody( softBody )
 	{
 	}
@@ -349,9 +391,33 @@ namespace btd
 		delete mSoftBody;
 	}
 
+	mndl::assimp::AssimpNodeRef String::getNode() const
+	{
+		return mNode;
+	}
+
 	btSoftBody* String::getSoftBody() const
 	{
 		return mSoftBody;
+	}
+
+	// synchronize the bullet world to graphics
+	void String::synchronize()
+	{
+// 		mndl::assimp::AssimpMeshRef mesh = *getNode()->mMeshes.begin();
+// 		std::vector< ci::Vec3f >& vertices = mesh->mCachedTriMesh.getVertices();
+
+		int size = getSoftBody()->m_nodes.size();
+		for( int pos = 0; pos < size; ++pos )
+		{
+			btSoftBody::Node& node = getSoftBody()->m_nodes.at( pos );
+
+			// TODO do something with the SoftBody vertex positions. (update the mesh vertices and normals)
+			ci::Vec3f vertexPosition = fromBullet( node.m_x );
+
+//			vertexPosition = getNode()->convertWorldToLocalPosition( vertexPosition );
+//			vertices[ pos ] = vertexPosition;
+		}
 	}
 
 	Action::Action( const std::string& name )

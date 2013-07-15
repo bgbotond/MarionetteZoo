@@ -9,6 +9,7 @@ namespace btd
 		registerModel( "test_softbody"     , "softbody8_1kotel.dae"  , "softbody8_1kotel.bullet"  , "nothing.xml" );
 		registerModel( "test_constraint"   , "testconstraint.dae"    , "testconstraint.bullet"    , "nothing.xml" );
 		registerModel( "test_softbody_bone", "softbody10_csontos.dae", "softbody10_csontos.bullet", "nothing.xml" );
+		registerModel( "simple_test", "simple_test2.dae", "simple_test2.bullet", "nothing.xml" );
 
 		// here we can add more models
 	}

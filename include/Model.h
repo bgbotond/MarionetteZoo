@@ -67,18 +67,21 @@ namespace btd
 	class Bone
 	{
 	public:
-		Bone( Model* owner, const mndl::NodeRef& node, btRigidBody* rigidBody );
+		Bone( Model* owner, const mndl::assimp::AssimpNodeRef& node, btRigidBody* rigidBody );
 		~Bone();
 
-		mndl::NodeRef     getNode() const;
-		btRigidBody*      getRigidBody() const;
+		mndl::assimp::AssimpNodeRef getNode() const;
+		btRigidBody*                getRigidBody() const;
+		ci::Matrix44f               getTransform() const;
 
-		void              synchronize();
+		void                        synchronize();
 
 	protected:
-		Model*            mOwner;
-		mndl::NodeRef     mNode;
-		btRigidBody*      mRigidBody;
+		Model*                      mOwner;
+		mndl::assimp::AssimpNodeRef mNode;
+		btRigidBody*                mRigidBody;
+
+		ci::Matrix44f               mTransform; // A transformation that converts the rigid body center of mass to the AssimpNode center position
 	};
 
 	// TODO make weak_ptr from Model*
@@ -103,16 +106,18 @@ namespace btd
 	class String
 	{
 	public:
-		String( Model* owner, btSoftBody* softBody );
+		String( Model* owner, const mndl::assimp::AssimpNodeRef& node, btSoftBody* softBody );
 		~String();
 
-		btSoftBody*       getSoftBody() const;
+		mndl::assimp::AssimpNodeRef getNode() const;
+		btSoftBody*                 getSoftBody() const;
 
-		void              synchronize();
+		void                        synchronize();
 
 	protected:
-		Model*            mOwner;
-		btSoftBody*       mSoftBody;
+		Model*                      mOwner;
+		mndl::assimp::AssimpNodeRef mNode;
+		btSoftBody*                 mSoftBody;
 	};
 
 	class Action

@@ -1,6 +1,6 @@
 #pragma once
 
-// TODO find out the correct header for shared_ptr
+#include <memory>
 #include <vector>
 #include "cinder/Ray.h"
 #include "cinder/Vector.h"

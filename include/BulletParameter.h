@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "cinder/Vector.h"
 #include "mndlkit/params/PParams.h"
 

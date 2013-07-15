@@ -280,6 +280,9 @@ namespace btd
 
 	void BulletWorld::mouseDown( ci::app::MouseEvent event, const ci::CameraPersp &cam )
 	{
+		// release picker if any
+		mouseUp( event, cam );
+
 		ci::Vec2f pos = ci::Vec2f( event.getPos() ) / ci::Vec2f( ci::app::App::get()->getWindowSize() );
 		pos.y         = 1.0f - pos.y;
 		ci::Ray ray   = cam.generateRay( pos.x, pos.y, ci::app::App::get()->getWindowAspectRatio() );
