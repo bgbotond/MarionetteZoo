@@ -36,9 +36,9 @@ public:
 	void resize();
 	void shutdown();
 
-	void testSoftBody();
-	void testConstraint();
-	void testSoftBodyBone();
+// 	void testSoftBody();
+// 	void testConstraint();
+// 	void testSoftBodyBone();
 	void testSoftBodyBoneColshape();
 
 protected:
@@ -119,20 +119,20 @@ void MarionetteZooApp::setupParams()
 	mParams.addPersistentParam( "Eye", &mCameraEyePoint, Vec3f( 0.0f, 10.0f, -40.0f ) );
 	mParams.addPersistentParam( "Center of Interest", &mCameraCenterOfInterestPoint, Vec3f( 0.0f, 10.0f, 0.0f ) );
 
-	mParams.addButton( "testSoftBody", [ this ]()
-								{
-									testSoftBody();
-								} );
-
-	mParams.addButton( "testConstraint", [ this ]()
-								{
-									testConstraint();
-								} );
-
-	mParams.addButton( "testSoftBodyBone", [ this ]()
-								{
-									testSoftBodyBone();
-								} );
+// 	mParams.addButton( "testSoftBody", [ this ]()
+// 								{
+// 									testSoftBody();
+// 								} );
+// 
+// 	mParams.addButton( "testConstraint", [ this ]()
+// 								{
+// 									testConstraint();
+// 								} );
+// 
+// 	mParams.addButton( "testSoftBodyBone", [ this ]()
+// 								{
+// 									testSoftBodyBone();
+// 								} );
 
 	mParams.addButton( "testSoftBodyBoneColshape", [ this ]()
 								{
@@ -301,23 +301,23 @@ void MarionetteZooApp::shutdown()
 	mndl::params::PInterfaceGl::save();
 }
 
-void MarionetteZooApp::testSoftBody()
-{
-	mModelManager->destroyModelAll();
-	mModelManager->createModel( "test_softbody", ci::Vec3f::zero(), "test_softbody" );
-}
-
-void MarionetteZooApp::testConstraint()
-{
-	mModelManager->destroyModelAll();
-	mModelManager->createModel( "test_constraint", ci::Vec3f::zero(), "test_constraint" );
-}
-
-void MarionetteZooApp::testSoftBodyBone()
-{
-	mModelManager->destroyModelAll();
-	mModelManager->createModel( "test_softbody_bone", ci::Vec3f::zero(), "test_softbody_bone" );
-}
+// void MarionetteZooApp::testSoftBody()
+// {
+// 	mModelManager->destroyModelAll();
+// 	mModelManager->createModel( "test_softbody", ci::Vec3f::zero(), "test_softbody" );
+// }
+// 
+// void MarionetteZooApp::testConstraint()
+// {
+// 	mModelManager->destroyModelAll();
+// 	mModelManager->createModel( "test_constraint", ci::Vec3f::zero(), "test_constraint" );
+// }
+// 
+// void MarionetteZooApp::testSoftBodyBone()
+// {
+// 	mModelManager->destroyModelAll();
+// 	mModelManager->createModel( "test_softbody_bone", ci::Vec3f::zero(), "test_softbody_bone" );
+// }
 
 void MarionetteZooApp::testSoftBodyBoneColshape()
 {
