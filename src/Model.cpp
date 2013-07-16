@@ -287,6 +287,7 @@ namespace btd
 		, mRigidBody( rigidBody )
 		, mTransform()
 	{
+		/*
 		const btTransform& centerOfMassTransform = rigidBody->getCenterOfMassTransform();
 
 		ci::Vec3f posBullet = fromBullet( centerOfMassTransform.getOrigin()   );
@@ -297,6 +298,7 @@ namespace btd
 
 		ci::Vec3f posAssimp2 = node->getDerivedPosition();
 		ci::Quatf rotAssimp2 = node->getDerivedOrientation();
+		*/
 
 		// TODO get the transformation between AssimpNode and RigidBody calculate mTransform
 // 		mTransform = ???
@@ -407,6 +409,7 @@ namespace btd
 // 		mndl::assimp::AssimpMeshRef mesh = *getNode()->mMeshes.begin();
 // 		std::vector< ci::Vec3f >& vertices = mesh->mCachedTriMesh.getVertices();
 
+#if 0
 		int size = getSoftBody()->m_nodes.size();
 		for( int pos = 0; pos < size; ++pos )
 		{
@@ -418,6 +421,7 @@ namespace btd
 //			vertexPosition = getNode()->convertWorldToLocalPosition( vertexPosition );
 //			vertices[ pos ] = vertexPosition;
 		}
+#endif
 	}
 
 	Action::Action( const std::string& name )

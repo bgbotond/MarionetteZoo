@@ -9,8 +9,9 @@
 #include "cinder/Utilities.h"
 
 #include "BulletWorld.h"
-#include "ModelManager.h"
 #include "Model.h"
+#include "ModelManager.h"
+#include "ModelFileManager.h"
 
 // for soft body test
 #include "BulletExtension/btSoftWorldImporter.h"
@@ -36,10 +37,7 @@ public:
 	void resize();
 	void shutdown();
 
-// 	void testSoftBody();
-// 	void testConstraint();
-// 	void testSoftBodyBone();
-	void testSoftBodyBoneColshape();
+	void testModel();
 
 protected:
 	void setupParams();
@@ -59,6 +57,9 @@ protected:
 	Vec3f     mCameraEyePoint;
 	Vec3f     mCameraCenterOfInterestPoint;
 	static const int mStepKey = 3;
+
+	vector< string > mModelTypes;
+	int mModelTypeId;
 
 	gl::Light* mLight;
 	Vec3f      mLightDirection;
@@ -118,26 +119,12 @@ void MarionetteZooApp::setupParams()
 	mParams.addPersistentParam( "Fov", &mCameraFov, 45.f, "min=20 max=180 step=.1" );
 	mParams.addPersistentParam( "Eye", &mCameraEyePoint, Vec3f( 0.0f, 10.0f, -40.0f ) );
 	mParams.addPersistentParam( "Center of Interest", &mCameraCenterOfInterestPoint, Vec3f( 0.0f, 10.0f, 0.0f ) );
+	mParams.addSeparator();
 
-// 	mParams.addButton( "testSoftBody", [ this ]()
-// 								{
-// 									testSoftBody();
-// 								} );
-// 
-// 	mParams.addButton( "testConstraint", [ this ]()
-// 								{
-// 									testConstraint();
-// 								} );
-// 
-// 	mParams.addButton( "testSoftBodyBone", [ this ]()
-// 								{
-// 									testSoftBodyBone();
-// 								} );
-
-	mParams.addButton( "testSoftBodyBoneColshape", [ this ]()
-								{
-									testSoftBodyBoneColshape();
-								} );
+	mModelTypes = ModelFileManager::getSingleton().getModelTypes();
+	mModelTypeId = 0;
+	mParams.addParam( "Model", mModelTypes, &mModelTypeId );
+	mParams.addButton( "Test model", std::bind( &MarionetteZooApp::testModel, this ) );
 }
 
 void MarionetteZooApp::mouseDown( MouseEvent event )
@@ -301,28 +288,11 @@ void MarionetteZooApp::shutdown()
 	mndl::params::PInterfaceGl::save();
 }
 
-// void MarionetteZooApp::testSoftBody()
-// {
-// 	mModelManager->destroyModelAll();
-// 	mModelManager->createModel( "test_softbody", ci::Vec3f::zero(), "test_softbody" );
-// }
-// 
-// void MarionetteZooApp::testConstraint()
-// {
-// 	mModelManager->destroyModelAll();
-// 	mModelManager->createModel( "test_constraint", ci::Vec3f::zero(), "test_constraint" );
-// }
-// 
-// void MarionetteZooApp::testSoftBodyBone()
-// {
-// 	mModelManager->destroyModelAll();
-// 	mModelManager->createModel( "test_softbody_bone", ci::Vec3f::zero(), "test_softbody_bone" );
-// }
-
-void MarionetteZooApp::testSoftBodyBoneColshape()
+void MarionetteZooApp::testModel()
 {
 	mModelManager->destroyModelAll();
-	mModelManager->createModel( "softbody8", ci::Vec3f::zero(), "softbody8" );
+	mModelManager->createModel( mModelTypes[ mModelTypeId ], ci::Vec3f::zero(),
+				mModelTypes[ mModelTypeId ] );
 }
 
 CINDER_APP_NATIVE( MarionetteZooApp, RendererGl( RendererGl::AA_MSAA_4 ) )
