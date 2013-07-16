@@ -72,7 +72,6 @@ namespace btd
 		btBroadphaseInterface*                     mBroadphase;
 		btSequentialImpulseConstraintSolver*       mSolver;
 		btSoftRigidDynamicsWorld*                  mSoftRigidDynamicsWorld;
-		btSoftBodyWorldInfo                        mSoftBodyWorldInfo;
 
 		RigidBodies                                mRigidBodies;
 		SoftBodies                                 mSoftBodies;

@@ -322,7 +322,7 @@ void MarionetteZooApp::shutdown()
 void MarionetteZooApp::testSoftBodyBoneColshape()
 {
 	mModelManager->destroyModelAll();
-	mModelManager->createModel( "simple_test", ci::Vec3f::zero(), "simple_test" );
+	mModelManager->createModel( "softbody8", ci::Vec3f::zero(), "softbody8" );
 }
 
 CINDER_APP_NATIVE( MarionetteZooApp, RendererGl( RendererGl::AA_MSAA_4 ) )

@@ -38,7 +38,8 @@ namespace btd
 		if( mBulletParameter->mGravity != fromBullet( mSoftRigidDynamicsWorld->getGravity() ) )
 		{
 			mSoftRigidDynamicsWorld->setGravity( toBullet( mBulletParameter->mGravity ) );
-			mSoftBodyWorldInfo.m_gravity = toBullet( mBulletParameter->mGravity );
+			btSoftBodyWorldInfo& worldInfo = mSoftRigidDynamicsWorld->getWorldInfo();
+			worldInfo.m_gravity = toBullet( mBulletParameter->mGravity );
 		}
 
 		setShowDebugDrawRigidBody( mBulletParameter->mShowDebugDrawRigidBody );
@@ -81,19 +82,20 @@ namespace btd
 		mCollisionConfiguration = new btDefaultCollisionConfiguration();
 		mDispatcher             = new btCollisionDispatcher( mCollisionConfiguration );
 
-		mSoftBodyWorldInfo.m_dispatcher = mDispatcher;
-
 		btVector3 worldAabbMin( -10000, -10000, -10000 );
 		btVector3 worldAabbMax(  10000,  10000,  10000 );
 		mBroadphase = new btAxisSweep3( worldAabbMin, worldAabbMax );
-		mSoftBodyWorldInfo.m_broadphase = mBroadphase;
 
 		mSolver = new btSequentialImpulseConstraintSolver;
 
 		mSoftRigidDynamicsWorld = new btSoftRigidDynamicsWorld( mDispatcher, mBroadphase, mSolver, mCollisionConfiguration );
 		mSoftRigidDynamicsWorld->setGravity( btVector3( 0, -9.81, 0 ) );
-		mSoftBodyWorldInfo.m_gravity.setValue( 0, -9.81, 0 );
-		mSoftBodyWorldInfo.m_sparsesdf.Initialize();
+
+		btSoftBodyWorldInfo& worldInfo = mSoftRigidDynamicsWorld->getWorldInfo();
+		worldInfo.m_dispatcher = mDispatcher;
+		worldInfo.m_broadphase = mBroadphase;
+		worldInfo.m_gravity.setValue( 0, -9.81, 0 );
+		worldInfo.m_sparsesdf.Initialize();
 
 		mSoftRigidDynamicsWorld->getSolverInfo().m_numIterations = 10;
 		mSoftRigidDynamicsWorld->getDispatchInfo().m_enableSPU = true;

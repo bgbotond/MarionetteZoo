@@ -229,7 +229,7 @@ class BulletExport(bpy.types.Operator):
 
 #        self.rotate_all_objects(-math.pi/2.0, 'X')
 #        self.clearParent()
-        self.rotateObjects()
+#        self.rotateObjects()
 #        self.clear_all_parent()
 
         bpy.data.texts.new(name="SAVING_SCRIPT_PYSCRIPT") 
@@ -269,7 +269,7 @@ bge.logic.endGame()
         bpy.data.texts.remove(txt)
 
 #        self.rotate_all_objects(math.pi/2.0, 'X')
-        self.rotateObjectsBack()
+#        self.rotateObjectsBack()
 
 
     def execute(self, context):
