@@ -146,7 +146,6 @@ namespace btd
 		for( int constraintIdx = 0; constraintIdx < worldImporter->getNumConstraints(); constraintIdx++ )
 		{
 			btTypedConstraint* typedConstraint = worldImporter->getConstraintByIndex( constraintIdx );
-			assert( typedConstraint->getConstraintType() == CONETWIST_CONSTRAINT_TYPE );
 
 			mBulletWorld->setupConstraint( typedConstraint );
 			mBulletWorld->addConstraint( typedConstraint, true, true );
