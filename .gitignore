@@ -1,0 +1,5 @@
+scons/.sconsign.dblite
+scons/MarionetteZooApp
+scons/MarionetteZooApp.app/
+scons/config.log
+*.o
