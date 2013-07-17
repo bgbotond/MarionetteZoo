@@ -21,12 +21,9 @@ namespace btd
 {
 	Model::Model( const BulletWorldRef& bulletWorld, const ci::Vec3f& worldOffset, const std::string& type )
 		: mBulletWorld( bulletWorld )
-		, mAssimpLoader()
-		, mBones()
-		, mConstraints()
 	{
 		mAssimpLoader = mndl::assimp::AssimpLoaderRef( new mndl::assimp::AssimpLoader( ModelFileManager::getSingleton().getModelFile( type ) ) );
-// 		mAssimpLoader->enableSkinning( true );
+		mAssimpLoader->enableSkinning( true );
 // 		mAssimpLoader->enableAnimation( true );
 
 		// TODO apply the worldOffset to place it in special position
@@ -133,11 +130,19 @@ namespace btd
 			mBulletWorld->setupRigidBody( rigidBody );
 			mBulletWorld->addRigidBody( rigidBody, true );
 
-			// All the rigid body name should match with the .dae file bones.
-			mndl::assimp::AssimpNodeRef node = mAssimpLoader->getAssimpNode( name );
+			// All the rigid body name should match with the .dae file bones without the rb_ prefix
+			std::string nodeName = name.replace( 0, 3, "" );
+			mndl::assimp::AssimpNodeRef node = mAssimpLoader->getAssimpNode( nodeName );
 
-			BoneRef bone = BoneRef( new Bone( this, node, rigidBody ) );
-			mBones.push_back( bone );
+			if ( !node )
+			{
+				ci::app::console() << "node not found for name" << nodeName << std::endl;
+			}
+			else
+			{
+				BoneRef bone = BoneRef( new Bone( this, node, rigidBody ) );
+				mBones.push_back( bone );
+			}
 		}
 	}
 
@@ -155,9 +160,17 @@ namespace btd
 
 			BoneRef boneA = getBone( rigidBodyA );
 			BoneRef boneB = getBone( rigidBodyB );
-
-			ConstraintRef constraint = ConstraintRef( new Constraint( this, boneA, boneB, typedConstraint ) );
-			mConstraints.push_back( constraint );
+			/* there are constraints that are connected to a rigid and a soft
+			 * body in Blender, in which case one of the rigid body pointers is
+			 * invalid. Skip these constraints */
+			if ( boneA && boneB )
+			{
+				/* FIXME: why is this necessary, mConstraints is not used
+				 * anywhere, since the rigid bodies control the connected
+				 * bones, we are not dealing with constraints */
+				ConstraintRef constraint = ConstraintRef( new Constraint( this, boneA, boneB, typedConstraint ) );
+				mConstraints.push_back( constraint );
+			}
 		}
 	}
 
@@ -168,7 +181,7 @@ namespace btd
 			btSoftBody* softBody = worldImporter->getSoftBodyByIndex( softBodyIdx );
 
 			// the SoftBody names are not loaded by the worldImporter
-// 			std::string name = worldImporter->getNameForPointer( softBody );
+			// std::string name = worldImporter->getNameForPointer( softBody );
 
 			// it should link two RigidBodies
 			assert( softBody->m_anchors.size() == 2 );
@@ -178,8 +191,8 @@ namespace btd
 
 			// string name should be one of the RigidBody name it links but with "sb_" prefix instead of "rb_" prefix
 			std::string name = bone0->getNode()->getName();
-			mndl::assimp::AssimpNodeRef nodeString = mAssimpLoader->getAssimpNode( std::string( "sb_" ) + name.substr( 3, name.npos ) );
-			if( ! nodeString )
+			mndl::assimp::AssimpNodeRef nodeString = mAssimpLoader->getAssimpNode( name.replace( 0, 3, "sb_" ) );
+			if ( ! nodeString )
 			{
 				name = bone1->getNode()->getName();
 				nodeString = mAssimpLoader->getAssimpNode( std::string( "sb_" ) + name.substr( 3, name.npos ) );
@@ -236,10 +249,18 @@ namespace btd
 				float       rotateY  = child->getAttributeValue<float>( "rotateY", 0.0 );
 				float       rotateZ  = child->getAttributeValue<float>( "rotateZ", 0.0 );
 
-				BoneRef   bone    = getBone( nameBone );
+				BoneRef bone = getBone( nameBone );
 				ci::Vec3f impulse = ci::Vec3f( rotateX, rotateY, rotateZ );
 
-				action->addAnimation( bone, impulse );
+				if ( bone )
+				{
+					action->addAnimation( bone, impulse );
+				}
+				else
+				{
+					ci::app::console() << "unknown bone in action: " << nameBone << std::endl;
+				}
+
 			}
 			else if( child->getTag() == "sound")
 			{
@@ -260,8 +281,6 @@ namespace btd
 				return bone;
 		}
 
-		assert( 0 );
-
 		return BoneRef();
 	}
 
@@ -274,8 +293,6 @@ namespace btd
 			if( rigidBody == bone->getRigidBody() )
 				return bone;
 		}
-
-		assert( 0 );
 
 		return BoneRef();
 	}
@@ -337,15 +354,15 @@ namespace btd
 	// synchronize the bullet world to graphics
 	void Bone::synchronize()
 	{
-		const btTransform& centerOfMassTransform = getRigidBody()->getCenterOfMassTransform();
+		const btTransform& centerOfMassTransform = mRigidBody->getCenterOfMassTransform();
 
 		ci::Vec3f pos = fromBullet( centerOfMassTransform.getOrigin()   );
 		ci::Quatf rot = fromBullet( centerOfMassTransform.getRotation() );
 
 		// TODO use mTransform in synchronize
 
-		getNode()->setPosition(    getNode()->convertWorldToLocalPosition(    pos ) );
-		getNode()->setOrientation( getNode()->convertWorldToLocalOrientation( rot ) );
+		mNode->setPosition(    mNode->convertWorldToLocalPosition(    pos ) );
+		mNode->setOrientation( mNode->convertWorldToLocalOrientation( rot ) );
 	}
 
 	Constraint::Constraint( Model* owner, const BoneRef& boneA, const BoneRef& boneB, btTypedConstraint* constraint )

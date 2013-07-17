@@ -5,12 +5,7 @@ namespace btd
 {
 	ModelFileManager::ModelFileManager()
 	{
-//		registerModel( "bird", "bird.dae", "bird.bullet", "bird.xml" );
-		registerModel( "test_softbody"     , "softbody8_1kotel.dae"  , "softbody8_1kotel.bullet"  , "nothing.xml" );
-		registerModel( "test_constraint"   , "testconstraint.dae"    , "testconstraint.bullet"    , "nothing.xml" );
-		registerModel( "test_softbody_bone", "softbody10_csontos.dae", "softbody10_csontos.bullet", "nothing.xml" );
-		registerModel( "simple_test", "simple_test2.dae", "simple_test2.bullet", "nothing.xml" );
-		registerModel( "softbody8", "softbody8_2055.dae", "softbody8_2055.bullet", "nothing.xml" );
+		// registerModel( "bird", "bird.dae", "bird.bullet", "bird.xml" );
 
 		// load all models automatically from the models folder
 		ci::fs::path dataPath = ci::app::getAssetPath( "models" );
@@ -24,7 +19,7 @@ namespace btd
 				ci::fs::path bulletFile( it->path().filename() );
 
 				ci::app::console() << "registering model " << name << " " << daeFile << " " << bulletFile << std::endl;
-				registerModel( name, dataPath / daeFile, dataPath / bulletFile, "nothing.xml" );
+				registerModel( name, dataPath / daeFile, dataPath / bulletFile, dataPath / "nothing.xml" );
 			}
 		}
 	}

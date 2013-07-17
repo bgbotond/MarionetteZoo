@@ -190,6 +190,7 @@ namespace btd
 
 	void BulletWorld::addConstraint( btTypedConstraint* constraint, bool disableCollisionsBetweenLinkedBodies, bool load /* = false */ )
 	{
+		// FIXME: why is the load parameter required?
 		if( ! load )
 			mSoftRigidDynamicsWorld->addConstraint( constraint, disableCollisionsBetweenLinkedBodies );
 

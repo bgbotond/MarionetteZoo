@@ -10,7 +10,7 @@ env['APP_SOURCES'] = ['Audio.cpp', 'BulletDebugDrawer.cpp', 'BulletPicker.cpp',
 env['ASSETS'] = ['tomi1.jpg', '*.dae', '*.xml', '*.bullet']
 env['ASSETS'] += ['models/*']
 
-env['DEBUG'] = 0
+env['DEBUG'] = 1
 
 env = SConscript('../../../blocks/MndlKit/scons/SConscript', exports = 'env')
 env = SConscript('../../../blocks/Cinder-Assimp/scons/SConscript', exports = 'env')
