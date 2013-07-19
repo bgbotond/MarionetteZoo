@@ -273,7 +273,7 @@ void MarionetteZooApp::draw()
 
 	mParams.draw();
 
-	ci::gl::drawCoordinateFrame();
+	ci::gl::drawCoordinateFrame( 5.f );
 }
 
 void MarionetteZooApp::resize()

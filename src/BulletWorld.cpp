@@ -89,12 +89,12 @@ namespace btd
 		mSolver = new btSequentialImpulseConstraintSolver;
 
 		mSoftRigidDynamicsWorld = new btSoftRigidDynamicsWorld( mDispatcher, mBroadphase, mSolver, mCollisionConfiguration );
-		mSoftRigidDynamicsWorld->setGravity( btVector3( 0, -9.81, 0 ) );
+		mSoftRigidDynamicsWorld->setGravity( btVector3( 0, 0, -9.81 ) );
 
 		btSoftBodyWorldInfo& worldInfo = mSoftRigidDynamicsWorld->getWorldInfo();
 		worldInfo.m_dispatcher = mDispatcher;
 		worldInfo.m_broadphase = mBroadphase;
-		worldInfo.m_gravity.setValue( 0, -9.81, 0 );
+		worldInfo.m_gravity.setValue( 0, 0, -9.81 );
 		worldInfo.m_sparsesdf.Initialize();
 
 		mSoftRigidDynamicsWorld->getSolverInfo().m_numIterations = 10;
@@ -124,6 +124,7 @@ namespace btd
 
 	void BulletWorld::addRigidBody( btRigidBody* rigidBody, bool load /* = false */ )
 	{
+		// FIXME: why is the load parameter required?
 		if( ! load )
 			mSoftRigidDynamicsWorld->addRigidBody( rigidBody );
 
@@ -162,6 +163,7 @@ namespace btd
 
 	void BulletWorld::addSoftBody( btSoftBody* softBody, bool load /* = false */ )
 	{
+		// FIXME: why is the load parameter required?
 		if( ! load )
 			mSoftRigidDynamicsWorld->addSoftBody( softBody );
 
