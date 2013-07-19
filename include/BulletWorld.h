@@ -40,15 +40,15 @@ namespace btd
 		void initPhysics();
 		void donePhysics();
 
-		btDynamicsWorld* getDynamicsWorld();
+		btSoftRigidDynamicsWorld* getDynamicsWorld();
 
-		void addRigidBody( btRigidBody* rigidBody, bool load = false );
+		void addRigidBody( btRigidBody* rigidBody, bool add = false );
 		void removeRigidBody( btRigidBody* rigidBody );
 		void destroyRigidBodyAll();
-		void addSoftBody( btSoftBody* softBody, bool load = false );
+		void addSoftBody( btSoftBody* softBody, bool add = false );
 		void removeSoftBody( btSoftBody* softBody );
 		void destroySoftBodyAll();
-		void addConstraint( btTypedConstraint* constraint, bool disableCollisionsBetweenLinkedBodies, bool load = false );
+		void addConstraint( btTypedConstraint* constraint, bool add = false, bool disableCollisionsBetweenLinkedBodies = true );
 		void removeConstraint( btTypedConstraint* constraint );
 		void destroyConstraintAll();
 

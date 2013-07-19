@@ -117,15 +117,14 @@ namespace btd
 		delete mCollisionConfiguration;
 	}
 
-	btDynamicsWorld* BulletWorld::getDynamicsWorld()
+	btSoftRigidDynamicsWorld* BulletWorld::getDynamicsWorld()
 	{
 		return mSoftRigidDynamicsWorld;
 	}
 
-	void BulletWorld::addRigidBody( btRigidBody* rigidBody, bool load /* = false */ )
+	void BulletWorld::addRigidBody( btRigidBody* rigidBody, bool add /* = false */ )
 	{
-		// FIXME: why is the load parameter required?
-		if( ! load )
+		if( add )
 			mSoftRigidDynamicsWorld->addRigidBody( rigidBody );
 
 		mRigidBodies.push_back( rigidBody );
@@ -161,10 +160,9 @@ namespace btd
 		mRigidBodies.clear();
 	}
 
-	void BulletWorld::addSoftBody( btSoftBody* softBody, bool load /* = false */ )
+	void BulletWorld::addSoftBody( btSoftBody* softBody, bool add /* = false */ )
 	{
-		// FIXME: why is the load parameter required?
-		if( ! load )
+		if( add )
 			mSoftRigidDynamicsWorld->addSoftBody( softBody );
 
 		mSoftBodies.push_back( softBody );
@@ -190,10 +188,9 @@ namespace btd
 		mSoftBodies.clear();
 	}
 
-	void BulletWorld::addConstraint( btTypedConstraint* constraint, bool disableCollisionsBetweenLinkedBodies, bool load /* = false */ )
+	void BulletWorld::addConstraint( btTypedConstraint* constraint, bool add /* = false */, bool disableCollisionsBetweenLinkedBodies /* = false */ )
 	{
-		// FIXME: why is the load parameter required?
-		if( ! load )
+		if( add )
 			mSoftRigidDynamicsWorld->addConstraint( constraint, disableCollisionsBetweenLinkedBodies );
 
 		mConstraints.push_back( constraint );

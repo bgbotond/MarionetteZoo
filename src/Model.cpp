@@ -107,7 +107,7 @@ namespace btd
 	{
 		btSoftBulletWorldImporter worldImporter( (btSoftRigidDynamicsWorld*)mBulletWorld->getDynamicsWorld() );
 
-		worldImporter.loadFile( bulletFile.string().c_str());
+		worldImporter.loadFile( bulletFile.string().c_str() );
 
 		handleLoadRigidBodies( &worldImporter );
 		handleLoadConstraints( &worldImporter );
@@ -125,9 +125,9 @@ namespace btd
 			assert( name.substr( 0, 3 ) == "rb_" );
 
 			mBulletWorld->setupRigidBody( rigidBody );
-			mBulletWorld->addRigidBody( rigidBody, true );
+			mBulletWorld->addRigidBody( rigidBody );
 
-			// All the rigid body name should match with the .dae file bones without the rb_ prefix
+			// All rigid body names should match with the .dae file bones without the rb_ prefix
 			std::string nodeName = name.replace( 0, 3, "" );
 			mndl::assimp::AssimpNodeRef node = mAssimpLoader->getAssimpNode( nodeName );
 
@@ -150,7 +150,7 @@ namespace btd
 			btTypedConstraint* typedConstraint = worldImporter->getConstraintByIndex( constraintIdx );
 
 			mBulletWorld->setupConstraint( typedConstraint );
-			mBulletWorld->addConstraint( typedConstraint, true, true );
+			mBulletWorld->addConstraint( typedConstraint );
 
 			btRigidBody* rigidBodyA = &typedConstraint->getRigidBodyA();
 			btRigidBody* rigidBodyB = &typedConstraint->getRigidBodyB();
@@ -209,7 +209,7 @@ namespace btd
 #endif
 
 			mBulletWorld->setupSoftBody( softBody );
-			mBulletWorld->addSoftBody( softBody, true );
+			mBulletWorld->addSoftBody( softBody );
 			StringRef string = StringRef( new String( this, softBody ) );
 			mStrings.push_back( string );
 		}
