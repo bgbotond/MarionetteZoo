@@ -106,17 +106,15 @@ namespace btd
 	class String
 	{
 	public:
-		String( Model* owner, const mndl::assimp::AssimpNodeRef& node, btSoftBody* softBody );
+		String( Model* owner, btSoftBody* softBody );
 		~String();
 
-		mndl::assimp::AssimpNodeRef getNode() const;
-		btSoftBody*                 getSoftBody() const;
+		btSoftBody* getSoftBody() const;
 
-		void                        synchronize();
+		void draw() const;
 
 	protected:
 		Model*                      mOwner;
-		mndl::assimp::AssimpNodeRef mNode;
 		btSoftBody*                 mSoftBody;
 	};
 

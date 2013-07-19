@@ -24,7 +24,7 @@ namespace btd
 	{
 		mAssimpLoader = mndl::assimp::AssimpLoaderRef( new mndl::assimp::AssimpLoader( ModelFileManager::getSingleton().getModelFile( type ) ) );
 		mAssimpLoader->enableSkinning( true );
-// 		mAssimpLoader->enableAnimation( true );
+		//mAssimpLoader->enableAnimation( true );
 
 		// TODO apply the worldOffset to place it in special position
 
@@ -45,12 +45,6 @@ namespace btd
 			bone->synchronize();
 		}
 
-		for( auto it = mStrings.begin(); it != mStrings.end(); ++it )
-		{
-			StringRef string = *it;
-			string->synchronize();
-		}
-
 		mAssimpLoader->update();
 
 		// TODO update CrossBar
@@ -69,8 +63,11 @@ namespace btd
 				ci::gl::disableWireframe();
 		}
 
-		// TODO draw strings (SoftBody)
-		// position of the string should be calculated in String::synchrinize
+		// draw soft body strings
+		for ( auto it = mStrings.begin(); it != mStrings.end(); ++it )
+		{
+			(*it)->draw();
+		}
 	}
 
 	BulletWorldRef& Model::getBulletWorld()
@@ -180,33 +177,40 @@ namespace btd
 		{
 			btSoftBody* softBody = worldImporter->getSoftBodyByIndex( softBodyIdx );
 
+#if 0
+			 /* this part is not needed, since we render the strings instead
+			  * of controlling an assimp mesh */
+
 			// the SoftBody names are not loaded by the worldImporter
+			// TODO load the SoftBody names
 			// std::string name = worldImporter->getNameForPointer( softBody );
 
 			// it should link two RigidBodies
 			assert( softBody->m_anchors.size() == 2 );
 
-			BoneRef bone0 = getBone( softBody->m_anchors[ 0 ].m_body );
-			BoneRef bone1 = getBone( softBody->m_anchors[ 1 ].m_body );
+			// RigidBodies are rb_X and rb_Y
+			btRigidBody *rb0 = softBody->m_anchors[ 0 ].m_body;
+			btRigidBody *rb1 = softBody->m_anchors[ 1 ].m_body;
+			std::string name0 = worldImporter->getNameForPointer( rb0 );
+			std::string name1 = worldImporter->getNameForPointer( rb1 );
 
-			// string name should be one of the RigidBody name it links but with "sb_" prefix instead of "rb_" prefix
-			std::string name = bone0->getNode()->getName();
-			mndl::assimp::AssimpNodeRef nodeString = mAssimpLoader->getAssimpNode( name.replace( 0, 3, "sb_" ) );
-			if ( ! nodeString )
-			{
-				name = bone1->getNode()->getName();
-				nodeString = mAssimpLoader->getAssimpNode( std::string( "sb_" ) + name.substr( 3, name.npos ) );
-			}
+			// soft body name is sb_X-Y, in which X and Y are in alphabetical order
+			std::string sbName;
+			if ( name0 < name1 )
+				sbName = "sb_" + name0 + name1;
+			else
+				sbName = "sb_" + name1 + name0;
 
+			nodeString = mAssimpLoader->getAssimpNode( sbName );
 			assert( nodeString );
 			assert( nodeString->mMeshes.size() == 1 ); // should contain only one mesh
 			mndl::assimp::AssimpMeshRef mesh = *nodeString->mMeshes.begin();
-			assert( softBody->m_nodes.size() == mesh->mAnimatedPos.size() ); // softBody vertex size should be the same as node mesh vertex size
+			//assert( softBody->m_nodes.size() == mesh->mAnimatedPos.size() ); // softBody vertex size should be the same as node mesh vertex size
+#endif
 
 			mBulletWorld->setupSoftBody( softBody );
 			mBulletWorld->addSoftBody( softBody, true );
-
-			StringRef string = StringRef( new String( this, nodeString, softBody ) );
+			StringRef string = StringRef( new String( this, softBody ) );
 			mStrings.push_back( string );
 		}
 	}
@@ -301,23 +305,24 @@ namespace btd
 		: mOwner( owner )
 		, mNode( node )
 		, mRigidBody( rigidBody )
-		, mTransform()
 	{
-		/*
+#if 0
+		// bullet center of mass transform
 		const btTransform& centerOfMassTransform = rigidBody->getCenterOfMassTransform();
-
-		ci::Vec3f posBullet = fromBullet( centerOfMassTransform.getOrigin()   );
+		ci::Vec3f posBullet = fromBullet( centerOfMassTransform.getOrigin() );
 		ci::Quatf rotBullet = fromBullet( centerOfMassTransform.getRotation() );
+		ci::Matrix44f matBullet = rotBullet.toMatrix44();
+		matBullet.setTranslate( posBullet );
 
-		ci::Vec3f posAssimp = node->convertLocalToWorldPosition(    node->getPosition()    );
-		ci::Quatf rotAssimp = node->convertLocalToWorldOrientation( node->getOrientation() );
+		// assimp node transform
+		ci::Vec3f posAssimp = node->getDerivedPosition();
+		ci::Quatf rotAssimp = node->getDerivedOrientation();
+		ci::Matrix44f matAssimp = rotAssimp.toMatrix44();
+		matAssimp.setTranslate( posAssimp );
 
-		ci::Vec3f posAssimp2 = node->getDerivedPosition();
-		ci::Quatf rotAssimp2 = node->getDerivedOrientation();
-		*/
-
-		// TODO get the transformation between AssimpNode and RigidBody calculate mTransform
-// 		mTransform = ???
+		// transformation between AssimpNode and RigidBody
+		mTransform = matBullet.inverted() * matAssimp;
+#endif
 	}
 
 	Bone::~Bone()
@@ -395,9 +400,8 @@ namespace btd
 		return mConstraint;
 	}
 
-	String::String( Model* owner, const mndl::assimp::AssimpNodeRef& node, btSoftBody* softBody )
+	String::String( Model* owner, btSoftBody* softBody )
 		: mOwner( owner )
-		, mNode( node )
 		, mSoftBody( softBody )
 	{
 	}
@@ -409,35 +413,26 @@ namespace btd
 		delete mSoftBody;
 	}
 
-	mndl::assimp::AssimpNodeRef String::getNode() const
-	{
-		return mNode;
-	}
-
 	btSoftBody* String::getSoftBody() const
 	{
 		return mSoftBody;
 	}
 
-	// synchronize the bullet world to graphics
-	void String::synchronize()
+	void String::draw() const
 	{
-// 		mndl::assimp::AssimpMeshRef mesh = *getNode()->mMeshes.begin();
-// 		std::vector< ci::Vec3f >& vertices = mesh->mCachedTriMesh.getVertices();
+		ci::gl::color( ci::Color::white() );
+		ci::gl::begin( GL_LINES );
 
-#if 0
-		int size = getSoftBody()->m_nodes.size();
-		for( int pos = 0; pos < size; ++pos )
+		btSoftBody::tLinkArray &links = mSoftBody->m_links;
+
+		for ( int i = 0; i < links.size(); i++ )
 		{
-			btSoftBody::Node& node = getSoftBody()->m_nodes.at( pos );
-
-			// TODO do something with the SoftBody vertex positions. (update the mesh vertices and normals)
-			ci::Vec3f vertexPosition = fromBullet( node.m_x );
-
-//			vertexPosition = getNode()->convertWorldToLocalPosition( vertexPosition );
-//			vertices[ pos ] = vertexPosition;
+			btSoftBody::Node *node0 = links[ i ].m_n[ 0 ];
+			btSoftBody::Node *node1 = links[ i ].m_n[ 1 ];
+			ci::gl::vertex( fromBullet( node0->m_x ) );
+			ci::gl::vertex( fromBullet( node1->m_x ) );
 		}
-#endif
+		ci::gl::end();
 	}
 
 	Action::Action( const std::string& name )
