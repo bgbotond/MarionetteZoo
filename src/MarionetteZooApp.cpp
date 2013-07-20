@@ -223,6 +223,8 @@ void MarionetteZooApp::keyDown( KeyEvent event )
 
 void MarionetteZooApp::update()
 {
+	mFps = getAverageFps();
+
 	CameraPersp cam = mMayaCam.getCamera();
 	if ( cam.getFov() != mCameraFov )
 	{
