@@ -72,7 +72,7 @@ namespace btd
 		mParamsDebugDraw.addText( "World" );
 		mParamsPhysics.addPersistentSizeAndPosition();
 
-		mParamsPhysics.addPersistentParam( "Gravity", &mGravity, ci::Vec3f( 0.0f, -9.81f, 0.0f ) );
+		mParamsPhysics.addPersistentParam( "Gravity", &mGravity, ci::Vec3f( 0.0f, 0.0f, -9.81f ) );
 
 		mParamsPhysics.addPersistentParam( "SimulateOne (v)"   , &mSimulateOne   , false );
 		mParamsPhysics.addPersistentParam( "SimulateAlways (c)", &mSimulateAlways, true  );
