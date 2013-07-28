@@ -75,7 +75,6 @@ namespace btd
 
 		mndl::assimp::AssimpNodeRef getNode() const;
 		btRigidBody*                getRigidBody() const;
-		ci::Matrix44f               getTransform() const;
 		int getLevel() const { return mLevel; }
 
 		void                        synchronize();

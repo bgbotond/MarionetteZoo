@@ -494,11 +494,6 @@ btRigidBody* Bone::getRigidBody() const
 	return mRigidBody;
 }
 
-ci::Matrix44f Bone::getTransform() const
-{
-	return mTransform;
-}
-
 // synchronize the bullet world to graphics
 void Bone::synchronize()
 {
