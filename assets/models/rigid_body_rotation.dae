@@ -233,29 +233,14 @@
     <visual_scene id="Scene" name="Scene">
       <node id="sb_rope_001" name="sb_rope_001" type="NODE">
         <matrix sid="transform">1 0 0 0.8999999 0 1 0 1.4484e-7 0 0 1 0.15 0 0 0 1</matrix>
-        <translate sid="location">0.8999999 1.4484e-7 0.15</translate>
-        <rotate sid="rotationZ">0 0 1 0</rotate>
-        <rotate sid="rotationY">0 1 0 0</rotate>
-        <rotate sid="rotationX">1 0 0 0</rotate>
-        <scale sid="scale">1 1 1</scale>
         <instance_geometry url="#Plane_002-mesh"/>
       </node>
       <node id="rope" name="rope" type="NODE">
         <matrix sid="transform">1 0 0 0.8999999 0 1 0 1.4484e-7 0 0 1 0.15 0 0 0 1</matrix>
-        <translate sid="location">0.8999999 1.4484e-7 0.15</translate>
-        <rotate sid="rotationZ">0 0 1 0</rotate>
-        <rotate sid="rotationY">0 1 0 0</rotate>
-        <rotate sid="rotationX">1 0 0 0</rotate>
-        <scale sid="scale">1 1 1</scale>
         <instance_geometry url="#Plane_001-mesh"/>
       </node>
       <node id="Armature" name="Armature" type="NODE">
         <matrix sid="transform">1 0 0 -0.9 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
-        <translate sid="location">-0.9 0 0</translate>
-        <rotate sid="rotationZ">0 0 1 0</rotate>
-        <rotate sid="rotationY">0 1 0 0</rotate>
-        <rotate sid="rotationX">1 0 0 0</rotate>
-        <scale sid="scale">1 1 1</scale>
         <node id="bone" name="bone" sid="bone" type="JOINT">
           <matrix sid="transform">1 0 2.42165e-16 0 0 1 0 0 2.42164e-16 0 1 0 0 0 0 1</matrix>
         </node>
@@ -272,11 +257,6 @@
       </node>
       <node id="Armature_001" name="Armature_001" type="NODE">
         <matrix sid="transform">1 0 0 1.123274 0 1 0 0.03469453 0 0 1 2.039987 0 0 0 1</matrix>
-        <translate sid="location">1.123274 0.03469453 2.039987</translate>
-        <rotate sid="rotationZ">0 0 1 0</rotate>
-        <rotate sid="rotationY">0 1 0 0</rotate>
-        <rotate sid="rotationX">1 0 0 0</rotate>
-        <scale sid="scale">1 1 1</scale>
         <node id="Cube" name="Cube" sid="Cube" type="JOINT">
           <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
         </node>
