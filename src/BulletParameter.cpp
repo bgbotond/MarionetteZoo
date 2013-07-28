@@ -116,6 +116,7 @@ namespace btd
 
 		mParamsDebugDraw = mndl::params::PInterfaceGl( "DebugDraw", ci::Vec2i( 250, 550 ), ci::Vec2i( 580, 50 ) );
 		mParamsDebugDraw.addPersistentParam( "DrawSkin"           , &mDrawSkin, true );
+		mParamsDebugDraw.addPersistentParam( "Draw skeleton", &mDrawSkeleton, false );
 		mParamsDebugDraw.addPersistentParam( "EnableWireframe"    , &mEnableWireframe, false );
 		mParamsDebugDraw.addPersistentParam( "ShowRigidBody"      , &mShowDebugDrawRigidBody, false );
 

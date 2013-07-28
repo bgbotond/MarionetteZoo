@@ -65,9 +65,6 @@ namespace btd
 				mSoftRigidDynamicsWorld->stepSimulation( deltatimephy, 10, timegranularityphysics );
 				mBulletParameter->mSimulateOne = false;
 			}
-
-			//optional but useful: debug drawing
-			mSoftRigidDynamicsWorld->debugDrawWorld();
 		}
 	}
 

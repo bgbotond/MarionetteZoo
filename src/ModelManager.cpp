@@ -62,11 +62,11 @@ namespace btd
 		}
 	}
 
-	void ModelManager::draw()
+	void ModelManager::draw( const ci::CameraPersp &camera )
 	{
 		for( auto it = mModels.begin(); it != mModels.end(); ++it )
 		{
-			it->second->draw();
+			it->second->draw( camera );
 		}
 	}
 

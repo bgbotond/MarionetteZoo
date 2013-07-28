@@ -32,7 +32,7 @@ namespace btd
 		~Model();
 
 		void update( const ci::Vec3f& pos, const ci::Vec3f& dir, const ci::Vec3f& norm );
-		void draw();
+		void draw( const ci::CameraPersp &camera );
 
 		BulletWorldRef& getBulletWorld();
 
@@ -51,6 +51,9 @@ namespace btd
 
 		BoneRef getBone( const std::string& name );
 		BoneRef getBone( btRigidBody* rigidBody );
+
+		void drawSkeleton( const ci::CameraPersp &camera );
+		void printNodeInfo( const mndl::NodeRef &node, int level = 0 );
 
 	protected:
 		BulletWorldRef                mBulletWorld;
@@ -73,6 +76,7 @@ namespace btd
 		mndl::assimp::AssimpNodeRef getNode() const;
 		btRigidBody*                getRigidBody() const;
 		ci::Matrix44f               getTransform() const;
+		int getLevel() const { return mLevel; }
 
 		void                        synchronize();
 
@@ -81,7 +85,10 @@ namespace btd
 		mndl::assimp::AssimpNodeRef mNode;
 		btRigidBody*                mRigidBody;
 
-		ci::Matrix44f               mTransform; // A transformation that converts the rigid body center of mass to the AssimpNode center position
+		// Offset transformation that converts the rigid body center of mass to the AssimpNode
+		ci::Vec3f mBoneTranslation;
+		ci::Quatf mBoneOrientation;
+		int mLevel;
 	};
 
 	// TODO make weak_ptr from Model*

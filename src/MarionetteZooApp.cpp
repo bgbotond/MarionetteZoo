@@ -117,13 +117,27 @@ void MarionetteZooApp::setupParams()
 	mParams.addText( "Camera" );
 	mParams.addPersistentParam( "Lock camera (l)", &mCameraLock, false );
 	mParams.addPersistentParam( "Fov", &mCameraFov, 45.f, "min=20 max=180 step=.1" );
-	mParams.addPersistentParam( "Eye", &mCameraEyePoint, Vec3f( 0.0f, 10.0f, -40.0f ) );
-	mParams.addPersistentParam( "Center of Interest", &mCameraCenterOfInterestPoint, Vec3f( 0.0f, 10.0f, 0.0f ) );
+	mParams.addPersistentParam( "Eye", &mCameraEyePoint, Vec3f( 0.0f, -20.0f, 0.0f ) );
+	mParams.addPersistentParam( "Center of Interest", &mCameraCenterOfInterestPoint, Vec3f( 0.0f, 0.0f, 0.1f ) );
+	mParams.addButton( "Reset camera", [ & ]()
+			{
+				mCameraCenterOfInterestPoint = Vec3f( 0.0f, 0.0f, 0.1f );
+				mCameraFov = 45.f;
+				mCameraEyePoint = Vec3f( 0.0f, -20.0f, 0.0f );
+
+				CameraPersp cam = mMayaCam.getCamera();
+				cam.setPerspective( mCameraFov, getWindowAspectRatio(), 0.1f, 1000.0f );
+				cam.setEyePoint( mCameraEyePoint );
+				cam.setCenterOfInterestPoint( mCameraCenterOfInterestPoint );
+				mMayaCam.setCurrentCam( cam );
+			} );
 	mParams.addSeparator();
 
 	mModelTypes = ModelFileManager::getSingleton().getModelTypes();
-	mModelTypeId = 0;
-	mParams.addParam( "Model", mModelTypes, &mModelTypeId );
+	mParams.addPersistentParam( "Model", mModelTypes, &mModelTypeId, 0 );
+	if ( mModelTypeId > mModelTypes.size() )
+		mModelTypeId = 0;
+
 	mParams.addButton( "Test model", std::bind( &MarionetteZooApp::testModel, this ) );
 }
 
@@ -271,11 +285,11 @@ void MarionetteZooApp::draw()
 	ci::gl::pushMatrices();
 	mBulletWorld->draw();
 	ci::gl::popMatrices();
-	mModelManager->draw();
-
-	mParams.draw();
+	mModelManager->draw( mMayaCam.getCamera() );
 
 	ci::gl::drawCoordinateFrame( 5.f );
+
+	mParams.draw();
 }
 
 void MarionetteZooApp::resize()

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "cinder/Vector.h"
+#include "cinder/Camera.h"
 
 #include "Model.h"
 
@@ -27,7 +28,7 @@ namespace btd
 
 		// TODO how update gets the current hand information?
 		void update();
-		void draw();
+		void draw( const ci::CameraPersp &camera );
 
 	protected:
 		Models::iterator findModel( const std::string& name );

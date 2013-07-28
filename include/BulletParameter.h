@@ -114,6 +114,7 @@ namespace btd
 
 		mndl::params::PInterfaceGl  mParamsDebugDraw;
 		bool                        mDrawSkin;
+		bool                        mDrawSkeleton;
 		bool                        mEnableWireframe;
 		bool                        mShowDebugDrawRigidBody;
 		static const int            GENERAL_DEBUG_DRAW_NUM = 16;
