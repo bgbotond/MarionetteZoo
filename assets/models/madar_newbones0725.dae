@@ -274,11 +274,6 @@
     <visual_scene id="mesh" name="mesh">
       <node id="madar_csontok" name="madar_csontok" type="NODE">
         <matrix sid="transform">1 0 0 -0.195581 0 1 0 0 0 0 1 -39.20065 0 0 0 1</matrix>
-        <translate sid="location">-0.195581 0 -39.20065</translate>
-        <rotate sid="rotationZ">0 0 1 0</rotate>
-        <rotate sid="rotationY">0 1 0 0</rotate>
-        <rotate sid="rotationX">1 0 0 0</rotate>
-        <scale sid="scale">1 1 1</scale>
         <node id="head" name="head" sid="head" type="JOINT">
           <matrix sid="transform">1 9.31323e-10 7.45058e-9 3.310901 0 1 0 4.19016e-6 7.45058e-9 7.45058e-9 1 -0.3152008 0 0 0 1</matrix>
           <node id="t_beak" name="t_beak" sid="t_beak" type="JOINT">
@@ -364,11 +359,6 @@
       </node>
       <node id="cross_bone" name="cross_bone" type="NODE">
         <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
-        <translate sid="location">0 0 0</translate>
-        <rotate sid="rotationZ">0 0 1 0</rotate>
-        <rotate sid="rotationY">0 1 0 0</rotate>
-        <rotate sid="rotationX">1 0 0 0</rotate>
-        <scale sid="scale">1 1 1</scale>
         <node id="cross" name="cross" sid="cross" type="JOINT">
           <matrix sid="transform">1 0 0 -1.383502 0 1 0 0 0 0 1 -1.47806e-14 0 0 0 1</matrix>
         </node>
