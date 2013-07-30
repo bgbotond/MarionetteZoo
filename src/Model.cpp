@@ -40,7 +40,7 @@ Model::Model( const BulletWorldRef& bulletWorld, const ci::Vec3f& worldOffset, c
 
 Model::~Model()
 {
-	// do nothing
+	// TODO: we should remove all physics objects from the bullet world here, shouldn't we?
 }
 
 void Model::printNodeInfo( const mndl::NodeRef &node, int level /* = 0 */ )
@@ -273,10 +273,8 @@ void Model::processConstraints( btSoftBulletWorldImporter* worldImporter )
 
 		BoneRef boneA = getBone( rigidBodyA );
 		BoneRef boneB = getBone( rigidBodyB );
-		/* there are constraints that are connected to a rigid and a soft
-		 * body in Blender, in which case one of the rigid body pointers is
-		 * invalid. Skip these constraints */
-		// these constraints are not in bullet file.
+		/* sometimes we got invalid pointers here, which theoretically should not happen.
+		 * if it does the bullet file has invalid data. */
 		if ( boneA && boneB )
 		{
 			ConstraintRef constraint = ConstraintRef( new Constraint( this, boneA, boneB, typedConstraint ) );
@@ -284,7 +282,6 @@ void Model::processConstraints( btSoftBulletWorldImporter* worldImporter )
 		}
 		else
 		{
-			// should not be happened. Otherwise the bullet file has invalid data.
 			assert( 0 );
 		}
 	}
@@ -545,14 +542,9 @@ void Bone::synchronize()
 
 void Bone::setOffset( const ci::Vec3f& offset )
 {
-	btRigidBody* rigidBody = getRigidBody();
-
-	const btTransform& centerOfMassTransform = rigidBody->getCenterOfMassTransform();
-	btTransform centerOfMassTransformNew = centerOfMassTransform;
-
-	centerOfMassTransformNew.setOrigin( centerOfMassTransformNew.getOrigin() + toBullet( offset ) );
-
-	rigidBody->setCenterOfMassTransform( centerOfMassTransformNew );
+	btTransform centerOfMassTransform = mRigidBody->getCenterOfMassTransform();
+	centerOfMassTransform.setOrigin( centerOfMassTransform.getOrigin() + toBullet( offset ) );
+	mRigidBody->setCenterOfMassTransform( centerOfMassTransform );
 }
 
 Constraint::Constraint( Model* owner, const BoneRef& boneA, const BoneRef& boneB, btTypedConstraint* constraint )
@@ -624,11 +616,11 @@ void String::setOffset( const ci::Vec3f& offset )
 {
 	btSoftBody* softBody = getSoftBody();
 	btSoftBody::tNodeArray& nodes = softBody->m_nodes;
+	btVector3 nodeOffset = toBullet( offset );
 
 	for( int i = 0; i < nodes.size(); i++ )
 	{
-		btSoftBody::Node& node = nodes[ i ];
-		node.m_x += toBullet( offset );
+		nodes[ i ].m_x += nodeOffset;
 	}
 }
 
