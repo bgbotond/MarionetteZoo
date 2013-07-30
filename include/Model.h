@@ -55,6 +55,8 @@ namespace btd
 		void drawSkeleton( const ci::CameraPersp &camera );
 		void printNodeInfo( const mndl::NodeRef &node, int level = 0 );
 
+		void setOffset( const ci::Vec3f& offset );
+
 	protected:
 		BulletWorldRef                mBulletWorld;
 
@@ -78,6 +80,7 @@ namespace btd
 		int getLevel() const { return mLevel; }
 
 		void                        synchronize();
+		void                        setOffset( const ci::Vec3f& offset );
 
 	protected:
 		Model*                      mOwner;
@@ -118,6 +121,7 @@ namespace btd
 		btSoftBody* getSoftBody() const;
 
 		void draw() const;
+		void setOffset( const ci::Vec3f& offset );
 
 	protected:
 		Model*                      mOwner;

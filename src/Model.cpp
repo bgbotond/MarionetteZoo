@@ -30,10 +30,10 @@ Model::Model( const BulletWorldRef& bulletWorld, const ci::Vec3f& worldOffset, c
 	mAssimpLoader->enableSkinning( true );
 	//mAssimpLoader->enableAnimation( true );
 
-	// TODO apply the worldOffset to place it in special position
-
 	loadBullet( ModelFileManager::getSingleton().getBulletFile( type ) );
 	loadActions( ModelFileManager::getSingleton().getActionFile( type ) );
+
+	setOffset( worldOffset );
 
 	printNodeInfo( mAssimpLoader->getRootNode() );
 }
@@ -436,6 +436,23 @@ BoneRef Model::getBone( btRigidBody* rigidBody )
 	return BoneRef();
 }
 
+void Model::setOffset( const ci::Vec3f& offset )
+{
+	for( auto it = mBones.begin(); it != mBones.end(); ++it )
+	{
+		BoneRef bone = *it;
+
+		bone->setOffset( offset );
+	}
+
+	for( auto it = mStrings.begin(); it != mStrings.end(); ++it )
+	{
+		StringRef string = *it;
+
+		string->setOffset( offset );
+	}
+}
+
 Bone::Bone( Model* owner, const mndl::assimp::AssimpNodeRef& node, btRigidBody* rigidBody )
 	: mOwner( owner )
 	, mNode( node )
@@ -526,6 +543,18 @@ void Bone::synchronize()
 	mNode->setPosition( nodePos );
 }
 
+void Bone::setOffset( const ci::Vec3f& offset )
+{
+	btRigidBody* rigidBody = getRigidBody();
+
+	const btTransform& centerOfMassTransform = rigidBody->getCenterOfMassTransform();
+	btTransform centerOfMassTransformNew = centerOfMassTransform;
+
+	centerOfMassTransformNew.setOrigin( centerOfMassTransformNew.getOrigin() + toBullet( offset ) );
+
+	rigidBody->setCenterOfMassTransform( centerOfMassTransformNew );
+}
+
 Constraint::Constraint( Model* owner, const BoneRef& boneA, const BoneRef& boneB, btTypedConstraint* constraint )
 	: mOwner( owner )
 	, mBoneA( boneA )
@@ -589,6 +618,18 @@ void String::draw() const
 		ci::gl::vertex( fromBullet( node1->m_x ) );
 	}
 	ci::gl::end();
+}
+
+void String::setOffset( const ci::Vec3f& offset )
+{
+	btSoftBody* softBody = getSoftBody();
+	btSoftBody::tNodeArray& nodes = softBody->m_nodes;
+
+	for( int i = 0; i < nodes.size(); i++ )
+	{
+		btSoftBody::Node& node = nodes[ i ];
+		node.m_x += toBullet( offset );
+	}
 }
 
 Action::Action( const std::string& name )
