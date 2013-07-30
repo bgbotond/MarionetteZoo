@@ -42,9 +42,9 @@ namespace btd
 
 	protected:
 		void loadBullet( const ci::fs::path& bulletFile );
-		void handleLoadRigidBodies( btSoftBulletWorldImporter* worldImporter );
-		void handleLoadConstraints( btSoftBulletWorldImporter* worldImporter );
-		void handleLoadSoftBodies(  btSoftBulletWorldImporter* worldImporter );
+		void processRigidBodies( btSoftBulletWorldImporter* worldImporter );
+		void processConstraints( btSoftBulletWorldImporter* worldImporter );
+		void processSoftBodies(  btSoftBulletWorldImporter* worldImporter );
 
 		void loadActions( const ci::fs::path& actionFile );
 		void loadAction( const ci::XmlTree& node );

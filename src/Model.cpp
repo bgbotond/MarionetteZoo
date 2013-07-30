@@ -209,12 +209,12 @@ void Model::loadBullet( const ci::fs::path& bulletFile )
 
 	worldImporter.loadFile( bulletFile.string().c_str() );
 
-	handleLoadRigidBodies( &worldImporter );
-	handleLoadConstraints( &worldImporter );
-	handleLoadSoftBodies(  &worldImporter );
+	processRigidBodies( &worldImporter );
+	processConstraints( &worldImporter );
+	processSoftBodies(  &worldImporter );
 }
 
-void Model::handleLoadRigidBodies( btSoftBulletWorldImporter* worldImporter )
+void Model::processRigidBodies( btSoftBulletWorldImporter* worldImporter )
 {
 	for( int rigidBodyIdx = 0; rigidBodyIdx < worldImporter->getNumRigidBodies(); rigidBodyIdx++ )
 	{
@@ -259,7 +259,7 @@ void Model::handleLoadRigidBodies( btSoftBulletWorldImporter* worldImporter )
 	*/
 }
 
-void Model::handleLoadConstraints( btSoftBulletWorldImporter* worldImporter )
+void Model::processConstraints( btSoftBulletWorldImporter* worldImporter )
 {
 	for( int constraintIdx = 0; constraintIdx < worldImporter->getNumConstraints(); constraintIdx++ )
 	{
@@ -276,18 +276,21 @@ void Model::handleLoadConstraints( btSoftBulletWorldImporter* worldImporter )
 		/* there are constraints that are connected to a rigid and a soft
 		 * body in Blender, in which case one of the rigid body pointers is
 		 * invalid. Skip these constraints */
+		// these constraints are not in bullet file.
 		if ( boneA && boneB )
 		{
-			/* FIXME: why is this necessary, mConstraints is not used
-			 * anywhere, since the rigid bodies control the connected
-			 * bones, we are not dealing with constraints */
 			ConstraintRef constraint = ConstraintRef( new Constraint( this, boneA, boneB, typedConstraint ) );
 			mConstraints.push_back( constraint );
+		}
+		else
+		{
+			// should not be happened. Otherwise the bullet file has invalid data.
+			assert( 0 );
 		}
 	}
 }
 
-void Model::handleLoadSoftBodies( btSoftBulletWorldImporter* worldImporter )
+void Model::processSoftBodies( btSoftBulletWorldImporter* worldImporter )
 {
 	for( int softBodyIdx = 0; softBodyIdx < worldImporter->getNumSoftBodies(); softBodyIdx++ )
 	{
