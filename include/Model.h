@@ -2,6 +2,9 @@
 
 #include <vector>
 #include <map>
+
+#include "cinder/Timeline.h"
+
 #include "AssimpLoader.h"
 #include "Node.h"
 #include "BulletWorld.h"
@@ -28,11 +31,12 @@ namespace btd
 		typedef std::vector< ActionRef     > Actions;
 
 	public:
-		Model( const BulletWorldRef& bulletWorld, const ci::Vec3f& worldOffset, const std::string& type );
+		Model( const BulletWorldRef& bulletWorld, const ci::Vec3f& worldPos, const std::string& type );
 		~Model();
 
 		void update( const ci::Vec3f& pos, const ci::Vec3f& dir, const ci::Vec3f& norm );
 		void draw( const ci::CameraPersp &camera );
+		void moveTo( const ci::Vec3f& endPos, const float time );
 
 		BulletWorldRef& getBulletWorld();
 
@@ -49,13 +53,18 @@ namespace btd
 		void loadActions( const ci::fs::path& actionFile );
 		void loadAction( const ci::XmlTree& node );
 
+		BoneRef getCrossBar();
 		BoneRef getBone( const std::string& name );
 		BoneRef getBone( btRigidBody* rigidBody );
 
 		void drawSkeleton( const ci::CameraPersp &camera );
 		void printNodeInfo( const mndl::NodeRef &node, int level = 0 );
 
-		void setOffset( const ci::Vec3f& offset );
+		void setPos( const ci::Vec3f& worldPos );
+
+		void startAnimCrossBar();
+		void updateAnimCrossBar();
+		void finishAnimCrossBar();
 
 	protected:
 		BulletWorldRef                mBulletWorld;
@@ -66,6 +75,9 @@ namespace btd
 		Constraints                   mConstraints;
 		Strings                       mStrings;
 		Actions                       mActions;
+
+		ci::Anim< ci::Vec3f >         mAnimCrossBar;
+		bool                          mInAnimCrossBar;
 	};
 
 	// TODO make weak_ptr from Model*
@@ -80,6 +92,7 @@ namespace btd
 		int getLevel() const { return mLevel; }
 
 		void                        synchronize();
+		ci::Vec3f                   getPos();
 		void                        setOffset( const ci::Vec3f& offset );
 
 	protected:

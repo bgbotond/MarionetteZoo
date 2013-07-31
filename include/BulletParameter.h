@@ -91,7 +91,6 @@ namespace btd
 // 		float                       mAngCFM;
 
 		// rope
-		int                         mRopePart;
 		float                       mRopeMass;
 		float                       mKVCF;           // Velocities correction factor (Baumgarte)
 		float                       mKDP;            // Damping coefficient [0,1]

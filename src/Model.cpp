@@ -23,8 +23,9 @@
 namespace btd
 {
 
-Model::Model( const BulletWorldRef& bulletWorld, const ci::Vec3f& worldOffset, const std::string& type )
+Model::Model( const BulletWorldRef& bulletWorld, const ci::Vec3f& worldPos, const std::string& type )
 	: mBulletWorld( bulletWorld )
+	, mInAnimCrossBar( false )
 {
 	mAssimpLoader = mndl::assimp::AssimpLoaderRef( new mndl::assimp::AssimpLoader( ModelFileManager::getSingleton().getModelFile( type ) ) );
 	mAssimpLoader->enableSkinning( true );
@@ -33,7 +34,7 @@ Model::Model( const BulletWorldRef& bulletWorld, const ci::Vec3f& worldOffset, c
 	loadBullet( ModelFileManager::getSingleton().getBulletFile( type ) );
 	loadActions( ModelFileManager::getSingleton().getActionFile( type ) );
 
-	setOffset( worldOffset );
+	setPos( worldPos );
 
 	printNodeInfo( mAssimpLoader->getRootNode() );
 }
@@ -41,6 +42,7 @@ Model::Model( const BulletWorldRef& bulletWorld, const ci::Vec3f& worldOffset, c
 Model::~Model()
 {
 	// TODO: we should remove all physics objects from the bullet world here, shouldn't we?
+	// the destructors of Bone, Constraint and String classes will do this task. 
 }
 
 void Model::printNodeInfo( const mndl::NodeRef &node, int level /* = 0 */ )
@@ -407,6 +409,11 @@ void Model::loadAction( const ci::XmlTree& node )
 	mActions.push_back( action );
 }
 
+BoneRef Model::getCrossBar()
+{
+	return getBone( "cross" );
+}
+
 BoneRef Model::getBone( const std::string& name )
 {
 	for( auto it = mBones.begin(); it != mBones.end(); ++it )
@@ -433,8 +440,11 @@ BoneRef Model::getBone( btRigidBody* rigidBody )
 	return BoneRef();
 }
 
-void Model::setOffset( const ci::Vec3f& offset )
+void Model::setPos( const ci::Vec3f& worldPos )
 {
+	BoneRef crossBar = getCrossBar();
+	ci::Vec3f offset = worldPos - crossBar->getPos();
+
 	for( auto it = mBones.begin(); it != mBones.end(); ++it )
 	{
 		BoneRef bone = *it;
@@ -448,6 +458,40 @@ void Model::setOffset( const ci::Vec3f& offset )
 
 		string->setOffset( offset );
 	}
+}
+
+void Model::moveTo( const ci::Vec3f& endPos, const float time )
+{
+	BoneRef crossBar = getCrossBar();
+	ci::Vec3f startPos = crossBar->getPos();
+
+	ci::app::App::get()->timeline().apply( &mAnimCrossBar, startPos, endPos, time, ci::EaseInOutCubic() )
+		.startFn(  std::bind( &Model::startAnimCrossBar,  this ) )
+		.updateFn( std::bind( &Model::updateAnimCrossBar, this ) )
+		.finishFn( std::bind( &Model::finishAnimCrossBar, this ) );
+}
+
+void Model::startAnimCrossBar()
+{
+	mInAnimCrossBar = true;
+}
+
+void Model::updateAnimCrossBar()
+{
+	BoneRef crossBar = getCrossBar();
+	btRigidBody* rigidBody = crossBar->getRigidBody();
+
+	const btTransform& centerOfMassTransform = rigidBody->getCenterOfMassTransform();
+	btTransform centerOfMassTransformNew = centerOfMassTransform;
+
+	centerOfMassTransformNew.setOrigin( toBullet( mAnimCrossBar ) );
+
+	rigidBody->setCenterOfMassTransform( centerOfMassTransformNew );
+}
+
+void Model::finishAnimCrossBar()
+{
+	mInAnimCrossBar = false;
 }
 
 Bone::Bone( Model* owner, const mndl::assimp::AssimpNodeRef& node, btRigidBody* rigidBody )
@@ -487,8 +531,6 @@ Bone::Bone( Model* owner, const mndl::assimp::AssimpNodeRef& node, btRigidBody* 
 
 Bone::~Bone()
 {
-	btCollisionShape* shape = mRigidBody->getCollisionShape();
-
 	mOwner->getBulletWorld()->removeRigidBody( mRigidBody );
 
 	while( mRigidBody->getNumConstraintRefs() > 0 )
@@ -497,7 +539,9 @@ Bone::~Bone()
 	if( mRigidBody->getMotionState() )
 		delete mRigidBody->getMotionState();
 
-	delete shape;
+	if( mRigidBody->getCollisionShape() )
+		delete mRigidBody->getCollisionShape();
+
 	delete mRigidBody;
 }
 
@@ -538,6 +582,12 @@ void Bone::synchronize()
 
 	mNode->setOrientation( nodeOri );
 	mNode->setPosition( nodePos );
+}
+
+ci::Vec3f Bone::getPos()
+{
+	const btTransform& centerOfMassTransform = mRigidBody->getCenterOfMassTransform();
+	return fromBullet( centerOfMassTransform.getOrigin() );
 }
 
 void Bone::setOffset( const ci::Vec3f& offset )

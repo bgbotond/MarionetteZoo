@@ -93,8 +93,7 @@ namespace btd
 // 		mParamsPhysics.addPersistentParam( "AngCFM"                     , &mAngCFM                   , 0.0f , "min=0.0 max=1.0 step=0.01" );
 
 		mParamsPhysics.addText( "Rope" );
-		mParamsPhysics.addPersistentParam( "Part"                                     , &mRopePart    , 16,   "min=4 max=50 step=1"         );
-		mParamsPhysics.addPersistentParam( "Mass"                                     , &mRopeMass    , 5.0,  "min=0.01 max=20.0 step=0.01" );
+		mParamsPhysics.addPersistentParam( "Mass"                                     , &mRopeMass    , 20.0, "min=0.01 max=20.0 step=0.01" );
 		mParamsPhysics.addPersistentParam( "Velocities correction factor (Baumgarte)" , &mKVCF        , 1.0,  "min=0.0  max=20.0 step=0.1"  );
 		mParamsPhysics.addPersistentParam( "Damping coefficient [0,1]"                , &mKDP         , 0.0,  "min=0.0  max=1.0  step=0.01" );
 		mParamsPhysics.addPersistentParam( "Drag coefficient [0,+inf]"                , &mKDG         , 0.0,  "min=0.0           step=0.01" );

@@ -5,16 +5,12 @@
 #include "cinder/ImageIo.h"
 #include "cinder/MayaCamUI.h"
 #include "cinder/Rand.h"
-#include "cinder/Timeline.h"
 #include "cinder/Utilities.h"
 
 #include "BulletWorld.h"
 #include "Model.h"
 #include "ModelManager.h"
 #include "ModelFileManager.h"
-
-// for soft body test
-#include "BulletExtension/btSoftWorldImporter.h"
 
 #include "mndlkit/params/PParams.h"
 
@@ -307,8 +303,11 @@ void MarionetteZooApp::shutdown()
 void MarionetteZooApp::testModel()
 {
 	mModelManager->destroyModelAll();
-	mModelManager->createModel( mModelTypes[ mModelTypeId ], ci::Vec3f::zero(),
-				mModelTypes[ mModelTypeId ] );
+	ModelRef model1 = mModelManager->createModel( "1", ci::Vec3f( 0, 0, 30 ), mModelTypes[ mModelTypeId ] );
+	model1->moveTo( ci::Vec3f( 0, 0, 0 ), 5.0f );
+
+	ModelRef model2 = mModelManager->createModel( "2", ci::Vec3f( 30, 0, 30 ), mModelTypes[ mModelTypeId ] );
+	model2->moveTo( ci::Vec3f( 30, 0, 0 ), 5.0f );
 }
 
 CINDER_APP_NATIVE( MarionetteZooApp, RendererGl( RendererGl::AA_MSAA_4 ) )
