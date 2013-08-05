@@ -303,11 +303,7 @@ void MarionetteZooApp::shutdown()
 void MarionetteZooApp::testModel()
 {
 	mModelManager->destroyModelAll();
-	ModelRef model1 = mModelManager->createModel( "1", ci::Vec3f( 0, 0, 30 ), mModelTypes[ mModelTypeId ] );
-	model1->moveTo( ci::Vec3f( 0, 0, 0 ), 5.0f );
-
-	ModelRef model2 = mModelManager->createModel( "2", ci::Vec3f( 30, 0, 30 ), mModelTypes[ mModelTypeId ] );
-	model2->moveTo( ci::Vec3f( 30, 0, 0 ), 5.0f );
+	mModelManager->createModel( "1", ci::Vec3f::zero(), mModelTypes[ mModelTypeId ] );
 }
 
 CINDER_APP_NATIVE( MarionetteZooApp, RendererGl( RendererGl::AA_MSAA_4 ) )

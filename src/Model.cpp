@@ -481,12 +481,10 @@ void Model::updateAnimCrossBar()
 	BoneRef crossBar = getCrossBar();
 	btRigidBody* rigidBody = crossBar->getRigidBody();
 
-	const btTransform& centerOfMassTransform = rigidBody->getCenterOfMassTransform();
-	btTransform centerOfMassTransformNew = centerOfMassTransform;
+	btTransform centerOfMassTransform = rigidBody->getCenterOfMassTransform();
+	centerOfMassTransform.setOrigin( toBullet( mAnimCrossBar ) );
 
-	centerOfMassTransformNew.setOrigin( toBullet( mAnimCrossBar ) );
-
-	rigidBody->setCenterOfMassTransform( centerOfMassTransformNew );
+	rigidBody->setCenterOfMassTransform( centerOfMassTransform );
 }
 
 void Model::finishAnimCrossBar()
